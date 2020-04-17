@@ -27,11 +27,11 @@ The learning curve is fairly shallow.
 ```
 # ./tt-hello-world.yaml
 
-- config
-    text-color: cyan
+- config:
+    typing-color: cyan
     typing-speed: moderate
 
-- commands
+- commands:
     - echo "Hello, World!"
 ```
 Now, we can run it in Python's interactive mode.
@@ -47,12 +47,12 @@ Hello World!
 ## Something Useful
 Now we see the gist of it, we can do something more useful.
 Let's say we want to show Mac OSX users how to find their shell profile.
-  
+
 The config section has defaults, so we can leave that out of our YAML file.
 ```
 # ./tt-show-mac-shell-profile.yaml
 
-- commands
+- commands:
     - echo ~
     - ls -l ~/.zshrc
     - cat ~/.zshrc

@@ -10,7 +10,7 @@ class TestLoadFile(unittest.TestCase):
     def test_load_valid_yaml_file(self):
         """Test loading a valid yaml file."""
 
-        test_file = "tests/data/valid_file.yaml"
+        test_file = "tests/data/tt-hello-world.yaml"
         result = typetastic.Robot.load_file(test_file)
 
         self.assertTrue(result)
