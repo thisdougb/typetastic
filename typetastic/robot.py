@@ -1,5 +1,6 @@
 """TypeTastic"""
 
+import pexpect
 import yaml
 
 
@@ -26,3 +27,16 @@ class Robot:
             except yaml.YAMLError as error:
                 print(error)
                 return False
+
+    @staticmethod
+    def run_command(command):
+        """Run local command."""
+
+        spawn_cmd = "/bin/bash -c '{0}'".format(command)
+        child = pexpect.spawn(spawn_cmd, timeout=None, encoding='utf-8')
+
+        for line in child:
+            print(line, end="")
+        child.close()
+
+        return child.exitstatus  # 0 = success, 1 = failure

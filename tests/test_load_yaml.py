@@ -22,3 +22,25 @@ class TestLoadFile(unittest.TestCase):
         result = typetastic.Robot.load_file(test_file)
 
         self.assertFalse(result)
+
+
+class TestRunLocalCommands(unittest.TestCase):
+    """Test running commands locally."""
+
+    def test_run_ls_command(self):
+        """Run basic ls command."""
+
+        robot = typetastic.Robot()
+        command = "ls tests/data/tt-hello-world.yaml"
+        result = robot.run_command(command)
+
+        self.assertEqual(result, 0)
+
+    def test_run_invalid_ls_command(self):
+        """Run basic ls command."""
+
+        robot = typetastic.Robot()
+        command = "ls []"
+        result = robot.run_command(command)
+
+        self.assertNotEqual(result, 0)
