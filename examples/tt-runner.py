@@ -14,12 +14,8 @@ def main():
     arg_parser.add_argument("inputfile")
     args = arg_parser.parse_args()
 
-    try:
-        tt = typetastic(args.inputfile)
-        tt.run()
-    except typetastic.Error as error:
-        print(error)
-
+    tastic_bot = typetastic.Robot
+    tastic_bot.hello()
 
 if __name__ == "__main__":
     main()
