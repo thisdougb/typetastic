@@ -43,3 +43,30 @@ Python 3.8.2 (default, Mar 11 2020, 00:29:50)
 >>> tt.run()
 $ echo "Hello World!"
 Hello World!
+```
+## Something Useful
+Now we see the gist of it, we can do something more useful.
+Let's say we want to show Mac OSX users how to find their shell profile.
+  
+The config section has defaults, so we can leave that out of our YAML file.
+```
+# ./tt-show-mac-shell-profile.yaml
+
+- commands
+    - echo ~
+    - ls -l ~/.zshrc
+    - cat ~/.zshrc
+```
+When we run this
+```
+dougb % python tt-runner.py tt-show-mac-shell-profile.yaml
+$ echo ~
+/Users/dougb
+$ ls -l ~/.zshrc
+-rw-r--r--  1 dougb  staff  93 13 Mar 09:14 /Users/dougb/.zshrc
+$ cat ~/.zshrc
+export GPG_TTY=$(tty)
+export PATH="/usr/local/opt/python@3.8/bin:$PATH"
+alias python=python3
+$  
+```
