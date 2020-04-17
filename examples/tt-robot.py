@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# tt-runner.py <file>
+# tt-robot.py <file>
 #
 # Run a typetastic command file.
 
