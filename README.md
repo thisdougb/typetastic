@@ -18,6 +18,8 @@ What this is not:
 * An orchestration tool.
 * A way to skive at work!
 
+There's a video [here on Vimeo](https://vimeo.com/224764672) of the screencast I did that led me to building this tool.
+It shows examples of most features.
 ## Hello World
 First up, we define our config and commands in YAML.
 This is YAML because it's easy to read, and easy to parse.
@@ -39,6 +41,5 @@ Python 3.8.2 (default, Mar 11 2020, 00:29:50)
 >>> import type-tastic
 >>> tt = type-tastic.load('tt-hello-world.yaml')
 >>> tt.run()
-echo "Hello World!"
+$ echo "Hello World!"
 Hello World!
-```
