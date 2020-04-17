@@ -1,5 +1,5 @@
 # type-tastic
-Python utility to make recording screencasts easier.
+Python utility to make creating screencasts easier.
 
 ## Intro
 A while back I did some Ansible training sessions, for which I did some screen recordings.
