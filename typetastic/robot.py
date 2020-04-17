@@ -8,7 +8,15 @@ class Robot:
     """Robot that runs the commands."""
 
     def __init__(self):
-        pass
+        self.data = {}
+
+    def load(self, inputfile):
+        """Public wrapper for load_file()."""
+        result = self.load_file(inputfile)
+        if result:
+            self.data = result
+
+        return result
 
     @staticmethod
     def load_file(inputfile):
@@ -20,7 +28,6 @@ class Robot:
         """
         with open(inputfile, 'r') as stream:
             try:
-                print(stream)
                 commands = yaml.load(stream, Loader=yaml.FullLoader)
                 return commands
 

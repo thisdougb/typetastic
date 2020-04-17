@@ -1,6 +1,6 @@
-- config:
+config:
     typing-color: cyan
     typing-speed: moderate
 
-- commands:
+commands:
     - echo "Hello, World!"
