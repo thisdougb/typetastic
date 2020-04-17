@@ -1,0 +1,8 @@
+- config:
+    typing-color: cyan
+    typing-speed: moderate
+- commands:
+    - clear
+    - ls
+    - NEWLINE
+    - echo hello

@@ -1,0 +1,9 @@
+- config:
+    typing-color: cyan
+    typing-speed: moderate
+    invalid key
+- commands:
+    - clear
+    - ls
+    - NEWLINE
+    - echo hello
