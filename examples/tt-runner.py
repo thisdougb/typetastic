@@ -16,14 +16,8 @@ def main():
     args = arg_parser.parse_args()
 
     robot = typetastic.Robot()
-    result = robot.load_file(args.inputfile)
-    if not result:
-        print("Failed to load yaml file: {0}".format(args.inputfile))
-        exit(1)
-
-    if "commands" in result:
-        for command in result["commands"]:
-            robot.run_command(command)
+    robot.load(args.inputfile)
+    robot.run()
 
 
 if __name__ == "__main__":

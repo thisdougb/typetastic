@@ -44,3 +44,29 @@ class TestRunLocalCommands(unittest.TestCase):
         result = robot.run_command(command)
 
         self.assertNotEqual(result, 0)
+
+    def test_run_valid_command_set(self):
+        """Run basic ls command."""
+
+        commands = {
+            "config": {"typing-speed": "moderate"},
+            "commands": ["echo 'Hello, World!'", "ls"]
+        }
+        robot = typetastic.Robot()
+        robot.data = commands
+        result = robot.run()
+
+        self.assertNotEqual(result, 2)
+
+    def test_run_partial_command_set(self):
+        """Run basic ls command."""
+
+        commands = {
+            "config": {"typing-speed": "moderate"},
+            "commands": ["echo 'Hello, World!'", "invalidcommand"]
+        }
+        robot = typetastic.Robot()
+        robot.data = commands
+        result = robot.run()
+
+        self.assertEqual(result, 1)

@@ -18,6 +18,19 @@ class Robot:
 
         return result
 
+    def run(self):
+        """Run the currently loaded commands.
+
+        Returns:
+        The number of commands with a success exit code.
+        """
+        successful_commands = 0
+        if "commands" in self.data:
+            for command in self.data["commands"]:
+                if self.run_command(command):
+                    successful_commands += 1
+        return successful_commands
+
     @staticmethod
     def load_file(inputfile):
         """Load YML file.
@@ -28,11 +41,11 @@ class Robot:
         """
         with open(inputfile, 'r') as stream:
             try:
-                commands = yaml.load(stream, Loader=yaml.FullLoader)
+                commands = yaml.load(stream, yaml.SafeLoader)
                 return commands
 
             except yaml.YAMLError as error:
-                print(error)
+                print("load_file: {0}".format(error))
                 return False
 
     @staticmethod
