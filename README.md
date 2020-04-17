@@ -25,41 +25,43 @@ First up, we define our config and commands in YAML.
 This is YAML because it's easy to read, and easy to parse.
 The learning curve is fairly shallow.
 ```
-# ./tt-hello-world.yaml
+# ./tests/data/tt-hello-world.yaml
 
-- config
-    text-color: cyan
+- config:
+    typing-color: cyan
     typing-speed: moderate
 
-- commands
+- commands:
     - echo "Hello, World!"
 ```
 Now, we can run it in Python's interactive mode.
 ```
 $ python
 Python 3.8.2 (default, Mar 11 2020, 00:29:50)
->>> import type-tastic
->>> tt = type-tastic.load('tt-hello-world.yaml')
->>> tt.run()
-$ echo "Hello World!"
-Hello World!
+>>> import typetastic
+>>> robot = typetastic.Robot()
+>>> robot.load('tests/data/tt-hello-world.yaml')
+{'config': {'typing-color': 'cyan', 'typing-speed': 'moderate'}, 'commands': ['echo "Hello, World!"']}
+>>> robot.run()
+Hello, World!
+0
 ```
 ## Something Useful
 Now we see the gist of it, we can do something more useful.
 Let's say we want to show Mac OSX users how to find their shell profile.
-  
+
 The config section has defaults, so we can leave that out of our YAML file.
 ```
 # ./tt-show-mac-shell-profile.yaml
 
-- commands
+- commands:
     - echo ~
     - ls -l ~/.zshrc
     - cat ~/.zshrc
 ```
 When we run this
 ```
-dougb % python tt-runner.py tt-show-mac-shell-profile.yaml
+dougb % python tt-robot.py tt-show-mac-shell-profile.yaml
 $ echo ~
 /Users/dougb
 $ ls -l ~/.zshrc
