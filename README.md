@@ -32,14 +32,12 @@ Python 3.8.2 (default, Mar 11 2020, 00:29:50)
 >>> import typetastic
 >>> robot = typetastic.Robot()
 >>> robot.load(['ls', 'echo "Hello World!"'])
-{'commands': ['ls', 'echo "Hello World!"']}
 >>> robot.run()
 $ ls
 LICENSE			build			dist			nosetests.json		setup.py		typetastic
 README.md		deploy_locally.sh	examples		package_admin.md	tests			typetastic.egg-info
 $ echo "Hello World!"
 Hello World!
-2
 >>>
 ```
 ## Something Useful
