@@ -62,8 +62,6 @@ class Robot:
                 # we .update() to merge into existing config defaults
                 self.__data["config"].update(result["config"])
 
-        return result
-
     def run(self):
         """Run the currently loaded commands.
 
@@ -94,6 +92,10 @@ class Robot:
             if key in self.__data["config"]:
                 return self.__data["config"][key]
         return None
+
+    def _get_data(self):
+        """Return the data dict."""
+        return self.__data
 
     @staticmethod
     def _simulate_typing(prompt, command, speed=None):

@@ -1,5 +1,6 @@
 """Test Load Commands."""
 
+import copy
 import unittest
 import typetastic
 
@@ -27,32 +28,38 @@ class TestLoadData(unittest.TestCase):
 
     def test_load_valid_yaml_dict(self):
         """Test loading a valid yaml file."""
+        # pylint: disable=protected-access
+
         data = {
-            "config": {"typing-color": "cyan", "typing-speed": "supersonic"},
+            "config": {"prompt-string": "$ ", "typing-color": "cyan", "typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "ls"]
         }
         robot = typetastic.Robot()
-        result = robot.load(data)
+        robot.load(data)
 
-        self.assertEqual(result, data)
+        self.assertEqual(robot._get_data(), data)
 
     def test_load_invalid_yaml_dict(self):
-        """Test loading an invalid yaml file."""
+        """Test loading an invalid yaml file does not change data."""
+        # pylint: disable=protected-access
         data = {
             "my": "test dict"
         }
         robot = typetastic.Robot()
-        result = robot.load(data)
+        pre_test_copy = copy.deepcopy(robot._get_data())
+        robot.load(data)
 
-        self.assertEqual(result, None)
+        self.assertEqual(robot._get_data(), pre_test_copy)
 
     def test_load_valid_commands_array(self):
-        """Test loading a valid yaml file."""
+        """Test loading a valid array updates commands."""
+        # pylint: disable=protected-access
         data = ["echo 'Hello, World!'", "ls"]
         robot = typetastic.Robot()
-        result = robot.load(data)
+        robot.load(data)
+        robot_data = robot._get_data()
 
-        self.assertEqual(result["commands"], data)
+        self.assertEqual(robot_data["commands"], data)
 
 
 class TestRunLocalCommands(unittest.TestCase):
