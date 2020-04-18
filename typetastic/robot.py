@@ -1,10 +1,12 @@
 """TypeTastic"""
 
-import getch
+import os
 import random
 import sys
 import time
 import yaml
+
+import getch
 import pexpect
 
 
@@ -36,6 +38,7 @@ class Robot:
             "prompt-string": "$ "
         }
         self.__successful_commands = 0
+        self.__current_directory = os.getcwd()
 
     def load(self, data_source):
         """Loads data either from file, dict or an array.
@@ -106,8 +109,14 @@ class Robot:
                         self._pause_flow()
                         self.__successful_commands += 1
 
-                    elif self._run_command(command):
+                    elif self._run_command(command, self.__current_directory):
                         self.__successful_commands += 1
+
+                        # change dir, under the hood. we pass this into the shell
+                        # spawn.
+                        if command.startswith("cd "):
+                            (_, path) = command.split(" ")
+                            self.__current_directory = path
 
                 print(prompt, end="")
                 sys.stdout.flush()
@@ -124,6 +133,10 @@ class Robot:
     def _get_data(self):
         """Return the data dict."""
         return self.__data
+
+    def _get_current_directory(self):
+        """Return the current directory."""
+        return self.__current_directory
 
     def _get_successful_commands(self):
         """Return the successful commands run."""
@@ -191,11 +204,11 @@ class Robot:
                 return False
 
     @staticmethod
-    def _run_command(command):
+    def _run_command(command, current_dir):
         """Run local command."""
 
         spawn_cmd = "/bin/bash -c '{0}'".format(command)
-        child = pexpect.spawn(spawn_cmd, timeout=None, encoding='utf-8')
+        child = pexpect.spawn(spawn_cmd, cwd=current_dir, timeout=None, encoding='utf-8')
 
         for line in child:
             print(line, end="")
