@@ -1,5 +1,6 @@
 """TypeTastic"""
 
+import getch
 import random
 import sys
 import time
@@ -77,13 +78,33 @@ class Robot:
         self.__successful_commands = 0  # reset this
 
         if "commands" in self.__data:
-            for command in self.__data["commands"]:
-                str_to_type = self._string_to_type(self.__data["config"], command)
-                prompt = self._get_config("prompt-string")
-                self._simulate_typing(prompt, str_to_type, typing_speed)
 
-                if self._run_command(command):
+            prompt = self._get_config("prompt-string")
+            print(prompt, end="")
+            sys.stdout.flush()
+
+            for command in self.__data["commands"]:
+
+                if command == "PAUSE":
+                    self._pause_flow()
                     self.__successful_commands += 1
+                    continue
+
+                elif command == 'NEWLINE':
+                    print()
+                    self.__successful_commands += 1
+
+                else:
+                    str_to_type = self._string_to_type(self.__data["config"], command)
+                    self._simulate_typing(str_to_type, typing_speed)
+
+                    if self._run_command(command):
+                        self.__successful_commands += 1
+
+                print(prompt, end="")
+                sys.stdout.flush()
+
+            print()  # run ends, tidy up
 
     def _get_config(self, key):
         """Lookup and return the config value for key."""
@@ -101,16 +122,16 @@ class Robot:
         return self.__successful_commands
 
     @staticmethod
-    def _simulate_typing(prompt, command, speed=None):
+    def _pause_flow():
+        getch.getch()
+
+    @staticmethod
+    def _simulate_typing(command, speed=None):
         """Simulates typing to stdout."""
         if speed not in Robot.TypingSpeeds:
             speed = "moderate"
 
         (speed_min, speed_max, return_key_delay) = Robot.TypingSpeeds[speed]
-
-        # the prompt is not a thing we type
-        print(prompt, end="")
-        sys.stdout.flush()
 
         for char in command:
             print(char, end="")

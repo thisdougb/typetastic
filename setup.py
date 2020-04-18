@@ -20,6 +20,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
+        'getch>=1.0',
         'pexpect>=4.8.0',
         'PyYAML>=5.3.1'
     ]
