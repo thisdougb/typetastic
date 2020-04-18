@@ -32,6 +32,7 @@ class Robot:
             "typing-speed": "moderate",
             "prompt-string": "$ "
         }
+        self.__successful_commands = 0
 
     def load(self, data_source):
         """Loads data either from file, dict or an array.
@@ -73,7 +74,7 @@ class Robot:
             if "typing-speed" in self.__data["config"]:
                 typing_speed = self.__data["config"]["typing-speed"]
 
-        successful_commands = 0
+        self.__successful_commands = 0  # reset this
 
         if "commands" in self.__data:
             for command in self.__data["commands"]:
@@ -82,9 +83,7 @@ class Robot:
                 self._simulate_typing(prompt, str_to_type, typing_speed)
 
                 if self._run_command(command):
-                    successful_commands += 1
-
-        return successful_commands  # useful for unit tests
+                    self.__successful_commands += 1
 
     def _get_config(self, key):
         """Lookup and return the config value for key."""
@@ -96,6 +95,10 @@ class Robot:
     def _get_data(self):
         """Return the data dict."""
         return self.__data
+
+    def _get_successful_commands(self):
+        """Return the successful commands run."""
+        return self.__successful_commands
 
     @staticmethod
     def _simulate_typing(prompt, command, speed=None):

@@ -95,9 +95,9 @@ class TestRunLocalCommands(unittest.TestCase):
         }
         robot = typetastic.Robot()
         robot.load(data)
-        result = robot.run()
+        robot.run()
 
-        self.assertEqual(result, 2)
+        self.assertEqual(robot._get_successful_commands(), 2)
 
     def test_run_partial_command_set(self):
         """Run basic ls command."""
@@ -109,9 +109,9 @@ class TestRunLocalCommands(unittest.TestCase):
         }
         robot = typetastic.Robot()
         robot.load(commands)
-        result = robot.run()
+        robot.run()
 
-        self.assertEqual(result, 1)
+        self.assertEqual(robot._get_successful_commands(), 1)
 
 
 class TestConfigLoading(unittest.TestCase):
