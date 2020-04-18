@@ -72,8 +72,8 @@ class TestRunLocalCommands(unittest.TestCase):
         self.assertEqual(result, 1)
 
 
-class TestTypeCommands(unittest.TestCase):
-    """Test typing commands."""
+class TestConfigLoading(unittest.TestCase):
+    """Test loading config and defaults."""
 
     def test_default_config(self):
         """Test empty config uses defaults."""
