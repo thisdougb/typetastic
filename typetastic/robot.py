@@ -1,5 +1,8 @@
 """TypeTastic"""
 
+import random
+import sys
+import time
 import yaml
 import pexpect
 
@@ -13,6 +16,10 @@ class Robot:
         "green": "\033[0;32m",
         "red": "\033[1;31m",
         "reset": "\033[0;0m"
+    }
+    TypingSpeeds = {
+        "moderate": [0.01, 0.4],
+        "supersonic": [0, 0]
     }
 
     def __init__(self):
@@ -41,11 +48,20 @@ class Robot:
         Returns:
         The number of commands with a success exit code.
         """
+        speed_to_type = None
+        if "config" in self.data:
+            if "typing-speed" in self.data["config"]:
+                speed_to_type = self.data["config"]["typing-speed"]
+
         successful_commands = 0
         if "commands" in self.data:
             for command in self.data["commands"]:
+                str_to_type = self._string_to_type(self.data["config"], command)
+                self._simulate_typing(str_to_type, speed_to_type)
+
                 if self._run_command(command):
                     successful_commands += 1
+
         return successful_commands
 
     def _get_config(self, key):
@@ -56,7 +72,21 @@ class Robot:
         return None
 
     @staticmethod
-    def _command_string_to_type(config, command):
+    def _simulate_typing(command, speed=None):
+        """Simulates typing to stdout."""
+        if speed not in Robot.TypingSpeeds:
+            speed = "moderate"
+
+        (speed_min, speed_max) = Robot.TypingSpeeds[speed]
+
+        for char in command:
+            print(char, end="")
+            sys.stdout.flush()
+            char_delay = random.uniform(speed_min, speed_max)
+            time.sleep(char_delay)
+
+    @staticmethod
+    def _string_to_type(config, command):
         """Returns the formatted string to type."""
 
         color = ""

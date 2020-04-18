@@ -1,5 +1,5 @@
 config:
-    typing-speed: fast
+    typing-speed: supersonic
 
 commands:
     - echo "Hello, World!"

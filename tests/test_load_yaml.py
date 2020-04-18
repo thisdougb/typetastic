@@ -53,7 +53,7 @@ class TestRunLocalCommands(unittest.TestCase):
         """Run basic ls command."""
 
         commands = {
-            "config": {"typing-speed": "moderate"},
+            "config": {"typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "ls"]
         }
         robot = typetastic.Robot()
@@ -66,7 +66,7 @@ class TestRunLocalCommands(unittest.TestCase):
         """Run basic ls command."""
 
         commands = {
-            "config": {"typing-speed": "moderate"},
+            "config": {"typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "invalidcommand"]
         }
         robot = typetastic.Robot()
@@ -105,7 +105,7 @@ class TestConfigLoading(unittest.TestCase):
         typing_speed = robot._get_config("typing-speed")
 
         self.assertEqual(prompt_string, "% ")
-        self.assertEqual(typing_speed, "slow")
+        self.assertEqual(typing_speed, "supersonic")
         self.assertEqual(typing_color, "red")
 
     def test_partial_config_loaded(self):
@@ -122,7 +122,7 @@ class TestConfigLoading(unittest.TestCase):
 
         self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
-        self.assertEqual(typing_speed, "fast")
+        self.assertEqual(typing_speed, "supersonic")
 
 
 class TestPrintingCommands(unittest.TestCase):
@@ -136,7 +136,7 @@ class TestPrintingCommands(unittest.TestCase):
         config = {"prompt-string": "$ ", "typing-color": "cyan"}
         command = "echo 'Hello, World!'"
 
-        result = robot._command_string_to_type(config, command)
+        result = robot._string_to_type(config, command)
         expected_result = "$ \x1b[1;36mecho 'Hello, World!'\x1b[0;0m"
 
         self.assertEqual(result, expected_result)
@@ -146,10 +146,10 @@ class TestPrintingCommands(unittest.TestCase):
         # pylint: disable=protected-access
 
         robot = typetastic.Robot()
-        config = {}
+        config = {"prompt-string": "$ "}
         command = "echo 'Hello, World!'"
 
-        result = robot._command_string_to_type(config, command)
+        result = robot._string_to_type(config, command)
         expected_result = "echo 'Hello, World!'"
 
         self.assertEqual(result, expected_result)
