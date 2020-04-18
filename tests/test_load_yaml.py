@@ -53,7 +53,7 @@ class TestRunLocalCommands(unittest.TestCase):
         """Run basic ls command."""
 
         commands = {
-            "config": {"typing-speed": "supersonic"},
+            "config": {"typing-color": "cyan", "typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "ls"]
         }
         robot = typetastic.Robot()
@@ -150,6 +150,6 @@ class TestPrintingCommands(unittest.TestCase):
         command = "echo 'Hello, World!'"
 
         result = robot._string_to_type(config, command)
-        expected_result = "echo 'Hello, World!'"
+        expected_result = "$ echo 'Hello, World!'"
 
         self.assertEqual(result, expected_result)

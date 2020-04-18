@@ -17,9 +17,11 @@ class Robot:
         "red": "\033[1;31m",
         "reset": "\033[0;0m"
     }
+
+    # min typing speed, max typing speed, return key delay
     TypingSpeeds = {
-        "moderate": [0.01, 0.4],
-        "supersonic": [0, 0]
+        "moderate": [0.01, 0.4, 1.0],
+        "supersonic": [0, 0, 0]
     }
 
     def __init__(self):
@@ -77,13 +79,16 @@ class Robot:
         if speed not in Robot.TypingSpeeds:
             speed = "moderate"
 
-        (speed_min, speed_max) = Robot.TypingSpeeds[speed]
+        (speed_min, speed_max, return_key_delay) = Robot.TypingSpeeds[speed]
 
         for char in command:
             print(char, end="")
             sys.stdout.flush()
             char_delay = random.uniform(speed_min, speed_max)
             time.sleep(char_delay)
+
+        time.sleep(return_key_delay)
+        print()  # newline required after typing command
 
     @staticmethod
     def _string_to_type(config, command):
@@ -98,7 +103,7 @@ class Robot:
                 color_reset = Robot.TextColors["reset"]
 
         prompt = ""
-        if "typing-color" in config:
+        if "prompt-string" in config:
             prompt = config["prompt-string"]
 
         command_string = "{0}{1}{2}{3}".format(prompt, color, command, color_reset)
