@@ -77,9 +77,15 @@ class Robot:
         self.__successful_commands = 0  # reset this
 
         if "commands" in self.__data:
+
+            prompt = self._get_config("prompt-string")
             for command in self.__data["commands"]:
+
+                if command == 'NEWLINE':
+                    print(prompt)
+                    continue
+
                 str_to_type = self._string_to_type(self.__data["config"], command)
-                prompt = self._get_config("prompt-string")
                 self._simulate_typing(prompt, str_to_type, typing_speed)
 
                 if self._run_command(command):

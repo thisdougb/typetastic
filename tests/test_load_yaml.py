@@ -1,7 +1,9 @@
 """Test Load Commands."""
 
 import copy
+from io import StringIO
 import unittest
+import sys
 import typetastic
 
 
@@ -164,7 +166,10 @@ class TestConfigLoading(unittest.TestCase):
 
 
 class TestPrintingCommands(unittest.TestCase):
-    """Test printing command strings."""
+    """Test printing command strings.
+
+    string_to_type is somewhat confusing, need a better name.
+    """
 
     def test_string_to_type_echo_hello_world(self):
         """Test command string format for typing."""
@@ -191,3 +196,46 @@ class TestPrintingCommands(unittest.TestCase):
         expected_result = "echo 'Hello, World!'"
 
         self.assertEqual(result, expected_result)
+
+    def test_ls_command_response(self):
+        """Test command string format for typing."""
+
+        temp_output = StringIO()
+        commands = {
+            "config": {"prompt-string": "$ ", "typing-color": "cyan", "typing-speed": "supersonic"},
+            "commands": ["ls tests/data/tt-hello-world.yaml"]
+        }
+
+        robot = typetastic.Robot()
+        robot.load(commands)
+
+        sys.stdout = temp_output
+        robot.run()
+        sys.stdout = sys.__stdout__
+
+        (cmd, response, _) = temp_output.getvalue().split("\n")
+
+        self.assertEqual(cmd, "$ \x1b[1;36mls tests/data/tt-hello-world.yaml\x1b[0;0m")
+        self.assertEqual(response, "tests/data/tt-hello-world.yaml\r")
+
+
+class TestMetaCommands(unittest.TestCase):
+    """Test typetastic meta commands."""
+
+    def test_newline_command(self):
+        """Test command string format for typing."""
+
+        temp_output = StringIO()
+        commands = {
+            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
+            "commands": ["NEWLINE"]
+        }
+
+        robot = typetastic.Robot()
+        robot.load(commands)
+
+        sys.stdout = temp_output
+        robot.run()
+        sys.stdout = sys.__stdout__
+
+        self.assertEqual(temp_output.getvalue(), "$ \n")
