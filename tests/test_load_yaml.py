@@ -37,7 +37,7 @@ class TestRunLocalCommands(unittest.TestCase):
         command = "ls tests/data/tt-hello-world.yaml"
         result = robot._run_command(command)
 
-        self.assertEqual(result, 0)
+        self.assertTrue(result)
 
     def test_run_invalid_ls_command(self):
         """Run basic ls command."""
@@ -47,30 +47,32 @@ class TestRunLocalCommands(unittest.TestCase):
         command = "ls []"
         result = robot._run_command(command)
 
-        self.assertNotEqual(result, 0)
+        self.assertFalse(result)
 
     def test_run_valid_command_set(self):
         """Run basic ls command."""
+        # pylint: disable=protected-access
 
-        commands = {
+        data = {
             "config": {"typing-color": "cyan", "typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "ls"]
         }
         robot = typetastic.Robot()
-        robot.data = commands
+        robot.load(data)
         result = robot.run()
 
-        self.assertNotEqual(result, 2)
+        self.assertEqual(result, 2)
 
     def test_run_partial_command_set(self):
         """Run basic ls command."""
+        # pylint: disable=protected-access
 
         commands = {
             "config": {"typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "invalidcommand"]
         }
         robot = typetastic.Robot()
-        robot.data = commands
+        robot.load(commands)
         result = robot.run()
 
         self.assertEqual(result, 1)
@@ -92,7 +94,7 @@ class TestConfigLoading(unittest.TestCase):
         self.assertEqual(typing_color, "cyan")
         self.assertEqual(typing_speed, "moderate")
 
-    def test_full_config_loaded(self):
+    def test_full_config_loaded_from_file(self):
         """Test loading config from file."""
         # pylint: disable=protected-access
 
