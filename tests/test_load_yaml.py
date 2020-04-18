@@ -114,3 +114,29 @@ class TestConfigLoading(unittest.TestCase):
         self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
         self.assertEqual(typing_speed, "fast")
+
+
+class TestPrintingCommands(unittest.TestCase):
+    """Test printing command strings."""
+
+    def test_string_to_type_echo_hello_world(self):
+        """Test command string format for typing."""
+        robot = typetastic.Robot()
+        config = {"prompt-string": "$ ", "typing-color": "cyan"}
+        command = "echo 'Hello, World!'"
+
+        result = robot.command_string_to_type(config, command)
+        expected_result = "$ \x1b[1;36mecho 'Hello, World!'\x1b[0;0m"
+
+        self.assertEqual(result, expected_result)
+
+    def test_string_to_type_with_no_color_config(self):
+        """Test command string format for typing."""
+        robot = typetastic.Robot()
+        config = {}
+        command = "echo 'Hello, World!'"
+
+        result = robot.command_string_to_type(config, command)
+        expected_result = "echo 'Hello, World!'"
+
+        self.assertEqual(result, expected_result)

@@ -1,11 +1,19 @@
 """TypeTastic"""
 
-import pexpect
 import yaml
+import pexpect
 
 
 class Robot:
     """Robot that runs the commands."""
+
+    TextColors = {
+        "blue": "\033[1;34m",
+        "cyan": "\033[1;36m",
+        "green": "\033[0;32m",
+        "red": "\033[1;31m",
+        "reset": "\033[0;0m"
+    }
 
     def __init__(self):
         self.data = {}
@@ -46,6 +54,25 @@ class Robot:
             if key in self.data["config"]:
                 return self.data["config"][key]
         return None
+
+    @staticmethod
+    def command_string_to_type(config, command):
+        """Returns the formatted string to type."""
+
+        color = ""
+        color_reset = ""
+        if "typing-color" in config:
+            if config["typing-color"] in Robot.TextColors:
+                color_name = config["typing-color"]
+                color = Robot.TextColors[color_name]
+                color_reset = Robot.TextColors["reset"]
+
+        prompt = ""
+        if "typing-color" in config:
+            prompt = config["prompt-string"]
+
+        command_string = "{0}{1}{2}{3}".format(prompt, color, command, color_reset)
+        return command_string
 
     @staticmethod
     def load_file(inputfile):
