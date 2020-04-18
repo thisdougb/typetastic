@@ -25,7 +25,7 @@ class Robot:
 
     def load(self, inputfile):
         """Public wrapper for load_file()."""
-        result = self.load_file(inputfile)
+        result = self._load_file(inputfile)
         if result:
             if "commands" in result:
                 self.data["commands"] = result["commands"]
@@ -44,11 +44,11 @@ class Robot:
         successful_commands = 0
         if "commands" in self.data:
             for command in self.data["commands"]:
-                if self.run_command(command):
+                if self._run_command(command):
                     successful_commands += 1
         return successful_commands
 
-    def get_config(self, key):
+    def _get_config(self, key):
         """Lookup and return the config value for key."""
         if "config" in self.data:
             if key in self.data["config"]:
@@ -56,7 +56,7 @@ class Robot:
         return None
 
     @staticmethod
-    def command_string_to_type(config, command):
+    def _command_string_to_type(config, command):
         """Returns the formatted string to type."""
 
         color = ""
@@ -75,7 +75,7 @@ class Robot:
         return command_string
 
     @staticmethod
-    def load_file(inputfile):
+    def _load_file(inputfile):
         """Load YML file.
 
         Returns:
@@ -92,7 +92,7 @@ class Robot:
                 return False
 
     @staticmethod
-    def run_command(command):
+    def _run_command(command):
         """Run local command."""
 
         spawn_cmd = "/bin/bash -c '{0}'".format(command)

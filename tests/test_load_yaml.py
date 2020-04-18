@@ -9,17 +9,19 @@ class TestLoadFile(unittest.TestCase):
 
     def test_load_valid_yaml_file(self):
         """Test loading a valid yaml file."""
+        # pylint: disable=protected-access
 
         test_file = "tests/data/tt-hello-world.yaml"
-        result = typetastic.Robot.load_file(test_file)
+        result = typetastic.Robot._load_file(test_file)
 
         self.assertTrue(result)
 
     def test_load_invalid_yaml_file(self):
         """Test loading an invalid yaml file."""
+        # pylint: disable=protected-access
 
         test_file = "tests/data/invalid_file.yaml"
-        result = typetastic.Robot.load_file(test_file)
+        result = typetastic.Robot._load_file(test_file)
 
         self.assertFalse(result)
 
@@ -29,19 +31,21 @@ class TestRunLocalCommands(unittest.TestCase):
 
     def test_run_ls_command(self):
         """Run basic ls command."""
+        # pylint: disable=protected-access
 
         robot = typetastic.Robot()
         command = "ls tests/data/tt-hello-world.yaml"
-        result = robot.run_command(command)
+        result = robot._run_command(command)
 
         self.assertEqual(result, 0)
 
     def test_run_invalid_ls_command(self):
         """Run basic ls command."""
+        # pylint: disable=protected-access
 
         robot = typetastic.Robot()
         command = "ls []"
-        result = robot.run_command(command)
+        result = robot._run_command(command)
 
         self.assertNotEqual(result, 0)
 
@@ -77,11 +81,12 @@ class TestConfigLoading(unittest.TestCase):
 
     def test_default_config(self):
         """Test empty config uses defaults."""
+        # pylint: disable=protected-access
         robot = typetastic.Robot()
 
-        prompt_string = robot.get_config("prompt-string")
-        typing_color = robot.get_config("typing-color")
-        typing_speed = robot.get_config("typing-speed")
+        prompt_string = robot._get_config("prompt-string")
+        typing_color = robot._get_config("typing-color")
+        typing_speed = robot._get_config("typing-speed")
 
         self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
@@ -89,13 +94,15 @@ class TestConfigLoading(unittest.TestCase):
 
     def test_full_config_loaded(self):
         """Test loading config from file."""
+        # pylint: disable=protected-access
+
         robot = typetastic.Robot()
         data_file = "tests/data/tt-hello-world.yaml"
         robot.load(data_file)
 
-        prompt_string = robot.get_config("prompt-string")
-        typing_color = robot.get_config("typing-color")
-        typing_speed = robot.get_config("typing-speed")
+        prompt_string = robot._get_config("prompt-string")
+        typing_color = robot._get_config("typing-color")
+        typing_speed = robot._get_config("typing-speed")
 
         self.assertEqual(prompt_string, "% ")
         self.assertEqual(typing_speed, "slow")
@@ -103,13 +110,15 @@ class TestConfigLoading(unittest.TestCase):
 
     def test_partial_config_loaded(self):
         """Test loading partial config from file preserves defaults."""
+        # pylint: disable=protected-access
+
         robot = typetastic.Robot()
         data_file = "tests/data/partial-config.yaml"
         robot.load(data_file)
 
-        prompt_string = robot.get_config("prompt-string")
-        typing_color = robot.get_config("typing-color")
-        typing_speed = robot.get_config("typing-speed")
+        prompt_string = robot._get_config("prompt-string")
+        typing_color = robot._get_config("typing-color")
+        typing_speed = robot._get_config("typing-speed")
 
         self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
@@ -121,22 +130,26 @@ class TestPrintingCommands(unittest.TestCase):
 
     def test_string_to_type_echo_hello_world(self):
         """Test command string format for typing."""
+        # pylint: disable=protected-access
+
         robot = typetastic.Robot()
         config = {"prompt-string": "$ ", "typing-color": "cyan"}
         command = "echo 'Hello, World!'"
 
-        result = robot.command_string_to_type(config, command)
+        result = robot._command_string_to_type(config, command)
         expected_result = "$ \x1b[1;36mecho 'Hello, World!'\x1b[0;0m"
 
         self.assertEqual(result, expected_result)
 
     def test_string_to_type_with_no_color_config(self):
         """Test command string format for typing."""
+        # pylint: disable=protected-access
+
         robot = typetastic.Robot()
         config = {}
         command = "echo 'Hello, World!'"
 
-        result = robot.command_string_to_type(config, command)
+        result = robot._command_string_to_type(config, command)
         expected_result = "echo 'Hello, World!'"
 
         self.assertEqual(result, expected_result)
