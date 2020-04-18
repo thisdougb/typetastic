@@ -20,7 +20,7 @@ class Robot:
 
     # min typing speed, max typing speed, return key delay
     TypingSpeeds = {
-        "moderate": [0.01, 0.4, 1.0],
+        "moderate": [0.01, 0.4, 0.5],
         "supersonic": [0, 0, 0]
     }
 
@@ -59,7 +59,8 @@ class Robot:
         if "commands" in self.data:
             for command in self.data["commands"]:
                 str_to_type = self._string_to_type(self.data["config"], command)
-                self._simulate_typing(str_to_type, speed_to_type)
+                prompt = self._get_config("prompt-string")
+                self._simulate_typing(prompt, str_to_type, speed_to_type)
 
                 if self._run_command(command):
                     successful_commands += 1
@@ -74,12 +75,16 @@ class Robot:
         return None
 
     @staticmethod
-    def _simulate_typing(command, speed=None):
+    def _simulate_typing(prompt, command, speed=None):
         """Simulates typing to stdout."""
         if speed not in Robot.TypingSpeeds:
             speed = "moderate"
 
         (speed_min, speed_max, return_key_delay) = Robot.TypingSpeeds[speed]
+
+        # the prompt is not a thing we type
+        print(prompt, end="")
+        sys.stdout.flush()
 
         for char in command:
             print(char, end="")
@@ -102,11 +107,7 @@ class Robot:
                 color = Robot.TextColors[color_name]
                 color_reset = Robot.TextColors["reset"]
 
-        prompt = ""
-        if "prompt-string" in config:
-            prompt = config["prompt-string"]
-
-        command_string = "{0}{1}{2}{3}".format(prompt, color, command, color_reset)
+        command_string = "{0}{1}{2}".format(color, command, color_reset)
         return command_string
 
     @staticmethod

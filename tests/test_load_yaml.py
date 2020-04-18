@@ -137,7 +137,7 @@ class TestPrintingCommands(unittest.TestCase):
         command = "echo 'Hello, World!'"
 
         result = robot._string_to_type(config, command)
-        expected_result = "$ \x1b[1;36mecho 'Hello, World!'\x1b[0;0m"
+        expected_result = "\x1b[1;36mecho 'Hello, World!'\x1b[0;0m"
 
         self.assertEqual(result, expected_result)
 
@@ -150,6 +150,6 @@ class TestPrintingCommands(unittest.TestCase):
         command = "echo 'Hello, World!'"
 
         result = robot._string_to_type(config, command)
-        expected_result = "$ echo 'Hello, World!'"
+        expected_result = "echo 'Hello, World!'"
 
         self.assertEqual(result, expected_result)
