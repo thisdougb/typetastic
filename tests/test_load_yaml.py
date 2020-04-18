@@ -70,3 +70,41 @@ class TestRunLocalCommands(unittest.TestCase):
         result = robot.run()
 
         self.assertEqual(result, 1)
+
+
+class TestTypeCommands(unittest.TestCase):
+    """Test typing commands."""
+
+    def test_default_config(self):
+        """Test empty config uses defaults."""
+        robot = typetastic.Robot()
+
+        typing_color = robot.get_config("typing-color")
+        typing_speed = robot.get_config("typing-speed")
+
+        self.assertEqual(typing_color, "cyan")
+        self.assertEqual(typing_speed, "moderate")
+
+    def test_full_config_loaded(self):
+        """Test loading config from file."""
+        robot = typetastic.Robot()
+        data_file = "tests/data/tt-hello-world.yaml"
+        robot.load(data_file)
+
+        typing_color = robot.get_config("typing-color")
+        typing_speed = robot.get_config("typing-speed")
+
+        self.assertEqual(typing_speed, "slow")
+        self.assertEqual(typing_color, "red")
+
+    def test_partial_config_loaded(self):
+        """Test loading partial config from file preserves defaults."""
+        robot = typetastic.Robot()
+        data_file = "tests/data/partial-config.yaml"
+        robot.load(data_file)
+
+        typing_color = robot.get_config("typing-color")
+        typing_speed = robot.get_config("typing-speed")
+
+        self.assertEqual(typing_color, "cyan")
+        self.assertEqual(typing_speed, "fast")

@@ -9,12 +9,20 @@ class Robot:
 
     def __init__(self):
         self.data = {}
+        self.data["config"] = {
+            "typing-color": "cyan",
+            "typing-speed": "moderate",
+        }
 
     def load(self, inputfile):
         """Public wrapper for load_file()."""
         result = self.load_file(inputfile)
         if result:
-            self.data = result
+            if "commands" in result:
+                self.data["commands"] = result["commands"]
+            if "config" in result:
+                # we .update() to merge into existing config defaults
+                self.data["config"].update(result["config"])
 
         return result
 
@@ -30,6 +38,13 @@ class Robot:
                 if self.run_command(command):
                     successful_commands += 1
         return successful_commands
+
+    def get_config(self, key):
+        """Lookup and return the config value for key."""
+        if "config" in self.data:
+            if key in self.data["config"]:
+                return self.data["config"][key]
+        return None
 
     @staticmethod
     def load_file(inputfile):

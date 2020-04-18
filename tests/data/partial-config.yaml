@@ -1,6 +1,5 @@
 config:
-    typing-color: red
-    typing-speed: slow
+    typing-speed: fast
 
 commands:
     - echo "Hello, World!"
