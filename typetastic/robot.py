@@ -20,7 +20,8 @@ class Robot:
 
     # min typing speed, max typing speed, return key delay
     TypingSpeeds = {
-        "moderate": [0.01, 0.4, 0.5],
+        "slow": [0.1, 0.4, 1.0],
+        "moderate": [0.05, 0.2, 0.5],
         "supersonic": [0, 0, 0]
     }
 
