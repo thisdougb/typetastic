@@ -211,7 +211,7 @@ class TestPrintingCommands(unittest.TestCase):
         robot.run()
         sys.stdout = sys.__stdout__
 
-        (cmd, response, _) = temp_output.getvalue().split("\n")
+        (cmd, response, _) = temp_output.getvalue().split("\n", 2)
 
         self.assertEqual(cmd, "$ \x1b[1;36mls tests/data/tt-hello-world.yaml\x1b[0;0m")
         self.assertEqual(response, "tests/data/tt-hello-world.yaml\r")
@@ -236,4 +236,4 @@ class TestMetaCommands(unittest.TestCase):
         robot.run()
         sys.stdout = sys.__stdout__
 
-        self.assertEqual(temp_output.getvalue(), "$ \n$ ")
+        self.assertEqual(temp_output.getvalue(), "$ \n$ \n")
