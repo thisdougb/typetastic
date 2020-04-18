@@ -2,6 +2,7 @@
 
 import copy
 from io import StringIO
+from unittest.mock import patch
 import unittest
 import sys
 import typetastic
@@ -221,7 +222,7 @@ class TestMetaCommands(unittest.TestCase):
     """Test typetastic meta commands."""
 
     def test_newline_command(self):
-        """Test command string format for typing."""
+        """Test newline command."""
 
         temp_output = StringIO()
         commands = {
@@ -237,3 +238,51 @@ class TestMetaCommands(unittest.TestCase):
         sys.stdout = sys.__stdout__
 
         self.assertEqual(temp_output.getvalue(), "$ \n$ \n")
+
+    @patch('typetastic.Robot._pause_flow')
+    def test_pause_command(self, mock_pause_flow):
+        """Test pause command."""
+        mock_pause_flow.return_value = True
+
+        data = {
+            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
+            "commands": ["PAUSE"]
+        }
+
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot.run()
+
+        self.assertEqual(mock_pause_flow.call_count, 1)
+
+
+class TestEditorCommands(unittest.TestCase):
+    """Test typetastic meta commands."""
+
+    def test_newline_command(self):
+        """Test command string format for typing."""
+        # pylint: disable=protected-access
+
+        robot = typetastic.Robot()
+
+        self.assertTrue(robot._is_editor("vi test"))
+        self.assertTrue(robot._is_editor("vim test"))
+        self.assertTrue(robot._is_editor("emacs test"))
+
+        self.assertFalse(robot._is_editor("ls test"))
+
+    @patch('typetastic.Robot._pause_flow')
+    def test_run_editor_command(self, mock_pause_flow):
+        """Test running an editor command causes PAUSE."""
+
+        mock_pause_flow.return_value = True
+        data = {
+            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
+            "commands": ["vi test"]
+        }
+
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot.run()
+
+        self.assertEqual(mock_pause_flow.call_count, 1)
