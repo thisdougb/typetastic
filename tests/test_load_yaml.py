@@ -236,4 +236,4 @@ class TestMetaCommands(unittest.TestCase):
         robot.run()
         sys.stdout = sys.__stdout__
 
-        self.assertEqual(temp_output.getvalue(), "$ \n")
+        self.assertEqual(temp_output.getvalue(), "$ \n$ ")

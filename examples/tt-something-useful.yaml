@@ -6,4 +6,5 @@ config:
 commands:
     - echo ~
     - ls -l ~/.zshrc
+    - PAUSE
     - cat ~/.zshrc
