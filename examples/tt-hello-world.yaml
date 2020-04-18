@@ -1,0 +1,7 @@
+config:
+    prompt-string: "$ "
+    typing-color: cyan
+    typing-speed: moderate
+
+commands:
+    - echo "Hello, World!"
