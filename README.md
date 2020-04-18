@@ -21,32 +21,23 @@ What this is not:
 There's a video [here on Vimeo](https://vimeo.com/224764672) of the screencast I did that led me to building this tool.
 It shows examples of most features.
 ## Hello World
-First up, we define our config and commands in YAML.
-This is YAML because it's easy to read, and easy to parse.
-The learning curve is fairly shallow.
-```
-# ./examples/tt-hello-world.yaml
+First up, we can do the easy example.
+TypeTastic uses a Robot to type commands for you.
+In the simplest form you can pass the commands in as an array.
 
-config:
-    prompt-string: "$ "
-    typing-color: cyan
-    typing-speed: moderate
-
-commands:
-    - echo "Hello, World!"
+Look here, in Python's interactive mode:
 ```
-Now, we can run it in Python's interactive mode.
-```
-$ python
+% python
 Python 3.8.2 (default, Mar 11 2020, 00:29:50)
 >>> import typetastic
 >>> robot = typetastic.Robot()
->>> robot.load('examples/tt-hello-world.yaml')
-{'config': {'prompt-string': '$ ', 'typing-color': 'cyan', 'typing-speed': 'moderate'}, 'commands': ['echo "Hello, World!"']}
+>>> robot.load(['ls', 'echo "Hello World!"'])
 >>> robot.run()
-$ echo "Hello, World!"
-Hello, World!
-0
+$ ls
+LICENSE			build			dist			nosetests.json		setup.py		typetastic
+README.md		deploy_locally.sh	examples		package_admin.md	tests			typetastic.egg-info
+$ echo "Hello World!"
+Hello World!
 >>>
 ```
 ## Something Useful

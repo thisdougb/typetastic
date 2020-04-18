@@ -26,24 +26,42 @@ class Robot:
     }
 
     def __init__(self):
-        self.data = {}
-        self.data["config"] = {
+        self.__data = {}
+        self.__data["config"] = {
             "typing-color": "cyan",
             "typing-speed": "moderate",
             "prompt-string": "$ "
         }
+        self.__successful_commands = 0
 
-    def load(self, inputfile):
-        """Public wrapper for load_file()."""
-        result = self._load_file(inputfile)
+    def load(self, data_source):
+        """Loads data either from file, dict or an array.
+
+        Inputs:
+
+        list of commands: ['ls', 'uptime']
+        dict of commands: {"commands": ['ls', 'uptime']}
+        dict of config: {"config": {'typing-color': 'red'} }
+        str of file path: "myfiledata.yaml"
+        """
+        if isinstance(data_source, dict):
+            if "commands" in data_source or "config" in data_source:
+                result = data_source
+            else:
+                result = None
+
+        if isinstance(data_source, list):
+            result = {"commands": data_source}
+
+        if isinstance(data_source, str):
+            result = self._load_file(data_source)
+
         if result:
             if "commands" in result:
-                self.data["commands"] = result["commands"]
+                self.__data["commands"] = result["commands"]
             if "config" in result:
                 # we .update() to merge into existing config defaults
-                self.data["config"].update(result["config"])
-
-        return result
+                self.__data["config"].update(result["config"])
 
     def run(self):
         """Run the currently loaded commands.
@@ -51,29 +69,36 @@ class Robot:
         Returns:
         The number of commands with a success exit code.
         """
-        speed_to_type = None
-        if "config" in self.data:
-            if "typing-speed" in self.data["config"]:
-                speed_to_type = self.data["config"]["typing-speed"]
+        typing_speed = None
+        if "config" in self.__data:
+            if "typing-speed" in self.__data["config"]:
+                typing_speed = self.__data["config"]["typing-speed"]
 
-        successful_commands = 0
-        if "commands" in self.data:
-            for command in self.data["commands"]:
-                str_to_type = self._string_to_type(self.data["config"], command)
+        self.__successful_commands = 0  # reset this
+
+        if "commands" in self.__data:
+            for command in self.__data["commands"]:
+                str_to_type = self._string_to_type(self.__data["config"], command)
                 prompt = self._get_config("prompt-string")
-                self._simulate_typing(prompt, str_to_type, speed_to_type)
+                self._simulate_typing(prompt, str_to_type, typing_speed)
 
                 if self._run_command(command):
-                    successful_commands += 1
-
-        return successful_commands
+                    self.__successful_commands += 1
 
     def _get_config(self, key):
         """Lookup and return the config value for key."""
-        if "config" in self.data:
-            if key in self.data["config"]:
-                return self.data["config"][key]
+        if "config" in self.__data:
+            if key in self.__data["config"]:
+                return self.__data["config"][key]
         return None
+
+    def _get_data(self):
+        """Return the data dict."""
+        return self.__data
+
+    def _get_successful_commands(self):
+        """Return the successful commands run."""
+        return self.__successful_commands
 
     @staticmethod
     def _simulate_typing(prompt, command, speed=None):
@@ -139,4 +164,5 @@ class Robot:
             print(line, end="")
         child.close()
 
-        return child.exitstatus  # 0 = success, 1 = failure
+        # 0 = success, 1 = failure in Unix, so invert result
+        return not bool(child.exitstatus)

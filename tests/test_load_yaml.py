@@ -1,10 +1,11 @@
 """Test Load Commands."""
 
+import copy
 import unittest
 import typetastic
 
 
-class TestLoadFile(unittest.TestCase):
+class TestLoadData(unittest.TestCase):
     """Test Load Command File."""
 
     def test_load_valid_yaml_file(self):
@@ -25,6 +26,41 @@ class TestLoadFile(unittest.TestCase):
 
         self.assertFalse(result)
 
+    def test_load_valid_yaml_dict(self):
+        """Test loading a valid yaml file."""
+        # pylint: disable=protected-access
+
+        data = {
+            "config": {"prompt-string": "$ ", "typing-color": "cyan", "typing-speed": "supersonic"},
+            "commands": ["echo 'Hello, World!'", "ls"]
+        }
+        robot = typetastic.Robot()
+        robot.load(data)
+
+        self.assertEqual(robot._get_data(), data)
+
+    def test_load_invalid_yaml_dict(self):
+        """Test loading an invalid yaml file does not change data."""
+        # pylint: disable=protected-access
+        data = {
+            "my": "test dict"
+        }
+        robot = typetastic.Robot()
+        pre_test_copy = copy.deepcopy(robot._get_data())
+        robot.load(data)
+
+        self.assertEqual(robot._get_data(), pre_test_copy)
+
+    def test_load_valid_commands_array(self):
+        """Test loading a valid array updates commands."""
+        # pylint: disable=protected-access
+        data = ["echo 'Hello, World!'", "ls"]
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot_data = robot._get_data()
+
+        self.assertEqual(robot_data["commands"], data)
+
 
 class TestRunLocalCommands(unittest.TestCase):
     """Test running commands locally."""
@@ -37,7 +73,7 @@ class TestRunLocalCommands(unittest.TestCase):
         command = "ls tests/data/tt-hello-world.yaml"
         result = robot._run_command(command)
 
-        self.assertEqual(result, 0)
+        self.assertTrue(result)
 
     def test_run_invalid_ls_command(self):
         """Run basic ls command."""
@@ -47,33 +83,35 @@ class TestRunLocalCommands(unittest.TestCase):
         command = "ls []"
         result = robot._run_command(command)
 
-        self.assertNotEqual(result, 0)
+        self.assertFalse(result)
 
     def test_run_valid_command_set(self):
         """Run basic ls command."""
+        # pylint: disable=protected-access
 
-        commands = {
+        data = {
             "config": {"typing-color": "cyan", "typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "ls"]
         }
         robot = typetastic.Robot()
-        robot.data = commands
-        result = robot.run()
+        robot.load(data)
+        robot.run()
 
-        self.assertNotEqual(result, 2)
+        self.assertEqual(robot._get_successful_commands(), 2)
 
     def test_run_partial_command_set(self):
         """Run basic ls command."""
+        # pylint: disable=protected-access
 
         commands = {
             "config": {"typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "invalidcommand"]
         }
         robot = typetastic.Robot()
-        robot.data = commands
-        result = robot.run()
+        robot.load(commands)
+        robot.run()
 
-        self.assertEqual(result, 1)
+        self.assertEqual(robot._get_successful_commands(), 1)
 
 
 class TestConfigLoading(unittest.TestCase):
@@ -92,7 +130,7 @@ class TestConfigLoading(unittest.TestCase):
         self.assertEqual(typing_color, "cyan")
         self.assertEqual(typing_speed, "moderate")
 
-    def test_full_config_loaded(self):
+    def test_full_config_loaded_from_file(self):
         """Test loading config from file."""
         # pylint: disable=protected-access
 
