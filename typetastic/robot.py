@@ -41,8 +41,8 @@ class Robot:
         """
         with open(inputfile, 'r') as stream:
             try:
-                commands = yaml.load(stream, yaml.SafeLoader)
-                return commands
+                data = yaml.load(stream, yaml.SafeLoader)
+                return data
 
             except yaml.YAMLError as error:
                 print("load_file: {0}".format(error))
