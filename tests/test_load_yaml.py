@@ -91,15 +91,13 @@ class TestRunLocalCommands(unittest.TestCase):
         """Run basic ls command."""
         # pylint: disable=protected-access
 
-        data = {
-            "config": {"typing-color": "cyan", "typing-speed": "supersonic"},
-            "commands": ["echo 'Hello, World!'", "ls"]
-        }
+        data_file = "tests/data/tt-list-of-commands-for-test.yaml"
         robot = typetastic.Robot()
-        robot.load(data)
+        robot.load(data_file)
         robot.run()
 
-        self.assertEqual(robot._get_successful_commands(), 2)
+        expected_count = len(robot._get_data()["commands"])
+        self.assertEqual(robot._get_successful_commands(), expected_count)
 
     def test_run_partial_command_set(self):
         """Run basic ls command."""

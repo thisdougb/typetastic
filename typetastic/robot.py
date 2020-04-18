@@ -83,6 +83,7 @@ class Robot:
 
                 if command == 'NEWLINE':
                     print(prompt)
+                    self.__successful_commands += 1
                     continue
 
                 str_to_type = self._string_to_type(self.__data["config"], command)
