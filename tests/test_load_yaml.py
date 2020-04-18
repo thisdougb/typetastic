@@ -74,7 +74,8 @@ class TestRunLocalCommands(unittest.TestCase):
 
         robot = typetastic.Robot()
         command = "ls tests/data/tt-hello-world.yaml"
-        result = robot._run_command(command)
+        current_directory = None
+        result = robot._run_command(command, current_directory)
 
         self.assertTrue(result)
 
@@ -84,13 +85,17 @@ class TestRunLocalCommands(unittest.TestCase):
 
         robot = typetastic.Robot()
         command = "ls []"
-        result = robot._run_command(command)
+        current_directory = None
+        result = robot._run_command(command, current_directory)
 
         self.assertFalse(result)
 
-    def test_run_valid_command_set(self):
+    @patch('typetastic.Robot._pause_flow')
+    def test_run_valid_command_set(self, mock_pause_flow):
         """Run basic ls command."""
         # pylint: disable=protected-access
+
+        mock_pause_flow.return_value = True
 
         data_file = "tests/data/tt-list-of-commands-for-test.yaml"
         robot = typetastic.Robot()
@@ -286,3 +291,22 @@ class TestEditorCommands(unittest.TestCase):
         robot.run()
 
         self.assertEqual(mock_pause_flow.call_count, 1)
+
+
+class TestChangeDirCommand(unittest.TestCase):
+    """Test changing directory."""
+
+    def test_cd_command(self):
+        """Test change dir sets __current_directory."""
+        # pylint: disable=protected-access
+
+        data = {
+            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
+            "commands": ["cd /etc"]
+        }
+
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot.run()
+
+        self.assertEqual(robot._get_current_directory(), "/etc")
