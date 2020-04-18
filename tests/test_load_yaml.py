@@ -4,7 +4,7 @@ import unittest
 import typetastic
 
 
-class TestLoadFile(unittest.TestCase):
+class TestLoadData(unittest.TestCase):
     """Test Load Command File."""
 
     def test_load_valid_yaml_file(self):
@@ -24,6 +24,35 @@ class TestLoadFile(unittest.TestCase):
         result = typetastic.Robot._load_file(test_file)
 
         self.assertFalse(result)
+
+    def test_load_valid_yaml_dict(self):
+        """Test loading a valid yaml file."""
+        data = {
+            "config": {"typing-color": "cyan", "typing-speed": "supersonic"},
+            "commands": ["echo 'Hello, World!'", "ls"]
+        }
+        robot = typetastic.Robot()
+        result = robot.load(data)
+
+        self.assertEqual(result, data)
+
+    def test_load_invalid_yaml_dict(self):
+        """Test loading an invalid yaml file."""
+        data = {
+            "my": "test dict"
+        }
+        robot = typetastic.Robot()
+        result = robot.load(data)
+
+        self.assertEqual(result, None)
+
+    def test_load_valid_commands_array(self):
+        """Test loading a valid yaml file."""
+        data = ["echo 'Hello, World!'", "ls"]
+        robot = typetastic.Robot()
+        result = robot.load(data)
+
+        self.assertEqual(result["commands"], data)
 
 
 class TestRunLocalCommands(unittest.TestCase):

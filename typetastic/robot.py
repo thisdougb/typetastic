@@ -34,19 +34,26 @@ class Robot:
         }
 
     def load(self, data_source):
-        """Loads data either from file or directly from an array."""
+        """Loads data either from file, dict or an array.
 
+        Inputs:
+
+        list of commands: ['ls', 'uptime']
+        dict of commands: {"commands": ['ls', 'uptime']}
+        dict of config: {"config": {'typing-color': 'red'} }
+        str of file path: "myfiledata.yaml"
+        """
         if isinstance(data_source, dict):
-            result = data_source
+            if "commands" in data_source or "config" in data_source:
+                result = data_source
+            else:
+                result = None
 
-        elif isinstance(data_source, list):
+        if isinstance(data_source, list):
             result = {"commands": data_source}
 
-        elif isinstance(data_source, str):
+        if isinstance(data_source, str):
             result = self._load_file(data_source)
-
-        else:
-            result = None
 
         if result:
             if "commands" in result:
