@@ -25,13 +25,14 @@ First up, we define our config and commands in YAML.
 This is YAML because it's easy to read, and easy to parse.
 The learning curve is fairly shallow.
 ```
-# ./tests/data/tt-hello-world.yaml
+# ./examples/tt-hello-world.yaml
 
-- config:
+config:
+    prompt-string: "$ "
     typing-color: cyan
     typing-speed: moderate
 
-- commands:
+commands:
     - echo "Hello, World!"
 ```
 Now, we can run it in Python's interactive mode.
@@ -40,11 +41,13 @@ $ python
 Python 3.8.2 (default, Mar 11 2020, 00:29:50)
 >>> import typetastic
 >>> robot = typetastic.Robot()
->>> robot.load('tests/data/tt-hello-world.yaml')
-{'config': {'typing-color': 'cyan', 'typing-speed': 'moderate'}, 'commands': ['echo "Hello, World!"']}
+>>> robot.load('examples/tt-hello-world.yaml')
+{'config': {'prompt-string': '$ ', 'typing-color': 'cyan', 'typing-speed': 'moderate'}, 'commands': ['echo "Hello, World!"']}
 >>> robot.run()
+$ echo "Hello, World!"
 Hello, World!
 0
+>>>
 ```
 ## Something Useful
 Now we see the gist of it, we can do something more useful.
@@ -52,16 +55,21 @@ Let's say we want to show Mac OSX users how to find their shell profile.
 
 The config section has defaults, so we can leave that out of our YAML file.
 ```
-# ./tt-show-mac-shell-profile.yaml
+# ./tt-something-useful.yaml
 
-- commands:
+config:
+    prompt-string: "$ "
+    typing-color: cyan
+    typing-speed: moderate
+
+commands:
     - echo ~
     - ls -l ~/.zshrc
     - cat ~/.zshrc
 ```
-When we run this
+When we run this:
 ```
-dougb % python tt-robot.py tt-show-mac-shell-profile.yaml
+dougb % python examples/tt-robot.py examples/tt-something-useful.yaml
 $ echo ~
 /Users/dougb
 $ ls -l ~/.zshrc
@@ -70,5 +78,4 @@ $ cat ~/.zshrc
 export GPG_TTY=$(tty)
 export PATH="/usr/local/opt/python@3.8/bin:$PATH"
 alias python=python3
-$  
 ```

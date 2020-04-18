@@ -1,0 +1,4 @@
+commands:
+    - echo ~
+    - ls -l ~/.zshrc
+    - cat ~/.zshrc
