@@ -12,6 +12,7 @@ class Robot:
         self.data["config"] = {
             "typing-color": "cyan",
             "typing-speed": "moderate",
+            "prompt-string": "$ "
         }
 
     def load(self, inputfile):

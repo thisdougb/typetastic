@@ -79,9 +79,11 @@ class TestTypeCommands(unittest.TestCase):
         """Test empty config uses defaults."""
         robot = typetastic.Robot()
 
+        prompt_string = robot.get_config("prompt-string")
         typing_color = robot.get_config("typing-color")
         typing_speed = robot.get_config("typing-speed")
 
+        self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
         self.assertEqual(typing_speed, "moderate")
 
@@ -91,9 +93,11 @@ class TestTypeCommands(unittest.TestCase):
         data_file = "tests/data/tt-hello-world.yaml"
         robot.load(data_file)
 
+        prompt_string = robot.get_config("prompt-string")
         typing_color = robot.get_config("typing-color")
         typing_speed = robot.get_config("typing-speed")
 
+        self.assertEqual(prompt_string, "% ")
         self.assertEqual(typing_speed, "slow")
         self.assertEqual(typing_color, "red")
 
@@ -103,8 +107,10 @@ class TestTypeCommands(unittest.TestCase):
         data_file = "tests/data/partial-config.yaml"
         robot.load(data_file)
 
+        prompt_string = robot.get_config("prompt-string")
         typing_color = robot.get_config("typing-color")
         typing_speed = robot.get_config("typing-speed")
 
+        self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
         self.assertEqual(typing_speed, "fast")
