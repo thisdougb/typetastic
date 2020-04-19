@@ -4,5 +4,10 @@ config:
     typing-speed: supersonic
 
 commands:
-    - ssh root@cardkist.com
+    - ls /etc/hosts
+    - ssh:
+        - ssh root@cardkist.com
         - ls
+        - whoami
+        - exit
+    - whoami

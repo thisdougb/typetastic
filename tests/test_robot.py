@@ -62,6 +62,18 @@ class TestLoadData(unittest.TestCase):
 
         self.assertEqual(robot_data["commands"], data)
 
+    def test_load_ssh_commands(self):
+        """Test loading ssh commands as nested arrays."""
+        # pylint: disable=protected-access
+
+        data = ["ls", {"ssh": ["ssh user@host", "ls", "exit"]}, "whoami"]
+
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot_data = robot._get_data()
+
+        self.assertEqual(robot_data["commands"], data)
+
 
 class TestCommandRunner(unittest.TestCase):
     """Test running commands locally."""
@@ -173,6 +185,27 @@ class TestCommandRunner(unittest.TestCase):
         expected_count = len(robot._get_data()["commands"])
 
         self.assertEqual(robot._get_successful_commands(), expected_count)
+
+    @patch('typetastic.robot.pxssh.pxssh.login')
+    @patch('typetastic.robot.pxssh.pxssh.logout')
+    @patch('typetastic.bot_handlers.run_ssh_command')
+    def test_ssh_command_set(self, mock_login, mock_logout, mock_ssh_run):
+        """Test successful commands count running ssh set."""
+        # pylint: disable=protected-access
+
+        mock_login.return_value = True
+        mock_logout.return_value = True
+        mock_ssh_run.return_value = True
+        data_file = "tests/data/typetastic-ssh-command-set.yaml"
+
+        robot = typetastic.Robot()
+        robot.load(data_file)
+        robot.run()
+
+        # NOTE: this is 5 and not 6 (there are six commands), because
+        # the ssh login and exit methods check return value of ssh_conn.closed.
+        # Too hard to mock that one right now, as it requires a side effect.
+        self.assertEqual(robot._get_successful_commands(), 5)
 
 
 class TestConfigLoading(unittest.TestCase):
