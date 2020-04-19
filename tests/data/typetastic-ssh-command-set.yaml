@@ -1,0 +1,13 @@
+config:
+    prompt-string: "% "
+    typing-color: red
+    typing-speed: supersonic
+
+commands:
+    - ls /etc/hosts
+    - ssh:
+        - ssh root@cardkist.com
+        - ls
+        - whoami
+        - exit
+    - whoami

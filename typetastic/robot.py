@@ -1,6 +1,7 @@
 """TypeTastic"""
 
 import os
+from pexpect import pxssh
 import yaml
 
 from . import bot_handlers as bothan
@@ -85,10 +86,44 @@ class Robot:
 
             for command in self.__data["commands"]:
 
+                if isinstance(command, dict) and "ssh" in command:
+                    # set up session
+                    try:
+                        ssh_conn = pxssh.pxssh()
+
+                        for remote_command in command["ssh"]:
+
+                            bothan_method = self._get_bothan_method(remote_command)
+                            simulated_typing = self._string_to_type(self.__data["config"],
+                                                                    remote_command)
+
+                            handler_data = {
+                                "remote": ssh_conn,
+                                "command": remote_command,
+                                "simulated_typing": simulated_typing,
+                                "typing_speed": self._get_typing_speeds(typing_speed),
+                                "current_directory": self.__current_directory
+                            }
+
+                            if bothan_method(handler_data):
+                                self.__successful_commands += 1
+
+                            # trailing emit, to setup the next line. pause is a special case.
+                            if remote_command == "exit":
+                                bothan.emit_prompt(prompt)
+
+                            elif not remote_command.startswith("PAUSE"):
+                                bothan.emit_prompt("[ssh] {0}".format(prompt))
+
+                        ssh_conn = None
+
+                    except pxssh.ExceptionPxssh as error:
+                        print("ssh login failed: {0}".format(error))
+
+                    continue  # remote commands done
+
                 # find the handler for this command, or use default
-                cmd_name = self._get_command_name(command)
-                fn_lookup = "bot_handler_{0}".format(cmd_name)
-                bothan_method = getattr(bothan, fn_lookup, bothan.bot_handler_default)
+                bothan_method = self._get_bothan_method(command)
 
                 handler_data = {
                     "command": command,
@@ -101,7 +136,7 @@ class Robot:
                     self.__successful_commands += 1
 
                     # trailing emit, to setup the next line. pause is a special case.
-                    if cmd_name != "pause":
+                    if not command.startswith("PAUSE"):
                         bothan.emit_prompt(prompt)
 
                     # change dir, under the hood. we pass this into the shell
@@ -111,6 +146,16 @@ class Robot:
                         self.__current_directory = path
 
             print()  # run ends, tidy up
+
+    @staticmethod
+    def _get_bothan_method(command):
+        """Returns bothan method for command."""
+
+        name = Robot._get_command_name(command)
+        fn_lookup = "bot_handler_{0}".format(name)
+        bothan_method = getattr(bothan, fn_lookup, bothan.bot_handler_default)
+
+        return bothan_method
 
     @staticmethod
     def _get_command_name(command):

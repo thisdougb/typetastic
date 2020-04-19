@@ -1,5 +1,7 @@
 """Test Load Commands."""
 
+import copy
+from pexpect import pxssh
 from io import StringIO
 from unittest.mock import patch
 import unittest
@@ -94,6 +96,28 @@ class TestHandlers(unittest.TestCase):
         bothan.bot_handler_pause(self.handler_data)
 
         self.assertEqual(mock_getch.call_count, 1)
+
+#        ssh_conn = pxssh.pxssh()
+#        r_handler_data = copy.deepcopy(self.handler_data)
+#        r_handler_data["remote"] = ssh_conn
+#        r_handler_data["command"] = "ssh root@cardkist.com"
+
+#        bothan.bot_handler_ssh(r_handler_data)
+
+    def test_parse_ssh_user_host(self):
+        """Test parsing user and host from command string."""
+
+        result = bothan.parse_ssh_user_host("ssh user@host")
+        self.assertEqual(result, ("user", "host"))
+
+        result = bothan.parse_ssh_user_host("ssh user@host.com")
+        self.assertEqual(result, ("user", "host.com"))
+
+        result = bothan.parse_ssh_user_host("ssh -l user host.com")
+        self.assertEqual(result, ("user", "host.com"))
+
+        result = bothan.parse_ssh_user_host("ssh host.com")
+        self.assertEqual(result, (None, "host.com"))
 
 
 class TestSimulatedTyping(unittest.TestCase):
