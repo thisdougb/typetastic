@@ -15,4 +15,4 @@ build:
 	python3 setup.py sdist bdist_wheel
 
 deploy: clean-build test build
-	pip3 install --force-reinstall dist/typetastic-$(VERSION).tar.gz
+	pip3 install --upgrade dist/typetastic-$(VERSION).tar.gz
