@@ -18,7 +18,7 @@ class TestHandlers(unittest.TestCase):
         self.text_reset = "\033[0;0m"
 
         self.handler_data = {
-            "command": "ls tests/data/tt-hello-world.yaml",
+            "command": "ls tests/data/typetastic-simple-command-set.yaml",
             "typing_speed": (0, 0, 0),
             "current_directory": None
         }
@@ -50,7 +50,7 @@ class TestHandlers(unittest.TestCase):
     def test_run_simple_ls_command(self):
         """Run basic command."""
 
-        result = bothan.run_command("ls /etc", None)
+        result = bothan.run_command("ls /etc/hosts", None)
         self.assertTrue(result)
 
     def test_run_invalid_ls_command(self):
@@ -106,7 +106,7 @@ class TestSimulatedTyping(unittest.TestCase):
         self.text_reset = "\033[0;0m"
 
         self.handler_data = {
-            "command": "ls tests/data/tt-hello-world.yaml",
+            "command": "ls tests/data/typetastic-simple-command-set.yaml",
             "typing_speed": (0, 0, 0),
             "current_directory": None
         }

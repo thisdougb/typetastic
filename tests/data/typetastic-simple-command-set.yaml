@@ -1,0 +1,9 @@
+config:
+    prompt-string: "% "
+    typing-color: red
+    typing-speed: supersonic
+
+commands:
+    - ls
+    - ls /etc/hosts
+    - uptime

@@ -1,0 +1,8 @@
+config:
+    prompt-string: "% "
+    typing-color: red
+    typing-speed: supersonic
+
+commands:
+    - NEWLINE
+    - PAUSE

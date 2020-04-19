@@ -4,8 +4,4 @@ config:
     typing-speed: supersonic
 
 commands:
-    - echo "Hello, World!"
-    - ls
-    - NEWLINE
-    - PAUSE
-    - cd /etc
+    blah blah

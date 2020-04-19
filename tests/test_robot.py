@@ -15,7 +15,7 @@ class TestLoadData(unittest.TestCase):
         """Test loading a valid yaml file."""
         # pylint: disable=protected-access
 
-        test_file = "tests/data/tt-hello-world.yaml"
+        test_file = "tests/data/typetastic-simple-command-set.yaml"
         result = typetastic.Robot._load_file(test_file)
 
         self.assertTrue(result)
@@ -65,59 +65,116 @@ class TestLoadData(unittest.TestCase):
         self.assertEqual(robot_data["commands"], data)
 
 
-class TestRunLocalCommands(unittest.TestCase):
+class TestCommandRunner(unittest.TestCase):
     """Test running commands locally."""
 
-    def test_run_ls_command(self):
-        """Run basic ls command."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-        command = "ls tests/data/tt-hello-world.yaml"
-        current_directory = None
-        result = robot._run_command(command, current_directory)
-
-        self.assertTrue(result)
-
-    def test_run_invalid_ls_command(self):
-        """Run basic ls command."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-        command = "ls []"
-        current_directory = None
-        result = robot._run_command(command, current_directory)
-
-        self.assertFalse(result)
-
     @patch('typetastic.bot_handlers.pause_flow')
-    def test_run_valid_command_set(self, mock_pause_flow):
-        """Run basic ls command."""
+    def test_valid_command_set(self, mock_pause_flow):
+        """Test successful commands count run in valid set."""
         # pylint: disable=protected-access
 
         mock_pause_flow.return_value = True
 
-        data_file = "tests/data/tt-list-of-commands-for-test.yaml"
+        data = {
+            "config": {"typing-speed": "supersonic"},
+            "commands": ["echo 'Hello, World!'", "ls /etc/hosts"]
+        }
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot.run()
+
+        self.assertEqual(robot._get_successful_commands(), 2)
+
+    def test_partial_command_set(self):
+        """Test successful commands count run in partial set."""
+        # pylint: disable=protected-access
+
+        data = {
+            "config": {"typing-speed": "supersonic"},
+            "commands": ["echo 'Hello, World!'", "invalidcommand"]
+        }
+        robot = typetastic.Robot()
+        robot.load(data)
+        robot.run()
+
+        self.assertEqual(robot._get_successful_commands(), 1)
+
+    def test_invalid_command_set(self):
+        """Test successful commands count run in partial set."""
+        # pylint: disable=protected-access
+
+        data_file = "tests/data/typetastic-invalid-command-set.yaml"
+        robot = typetastic.Robot()
+        robot.load(data_file)
+        robot.run()
+
+        print(robot._get_data())
+
+        self.assertEqual(robot._get_successful_commands(), 0)
+
+    @patch('typetastic.bot_handlers.pause_flow')
+    def test_meta_command_set(self, mock_pause_flow):
+        """Test successful commands count run in meta set."""
+        # pylint: disable=protected-access
+
+        mock_pause_flow.return_value = True
+
+        data_file = "tests/data/typetastic-meta-command-set.yaml"
         robot = typetastic.Robot()
         robot.load(data_file)
         robot.run()
 
         expected_count = len(robot._get_data()["commands"])
+
         self.assertEqual(robot._get_successful_commands(), expected_count)
 
-    def test_run_partial_command_set(self):
-        """Run basic ls command."""
+    @patch('typetastic.bot_handlers.pause_flow')
+    def test_editor_command_set(self, mock_pause_flow):
+        """Test successful commands count run in editor set."""
         # pylint: disable=protected-access
 
-        commands = {
-            "config": {"typing-speed": "supersonic"},
-            "commands": ["echo 'Hello, World!'", "invalidcommand"]
-        }
+        mock_pause_flow.return_value = True
+
+        data_file = "tests/data/typetastic-editor-command-set.yaml"
         robot = typetastic.Robot()
-        robot.load(commands)
+        robot.load(data_file)
         robot.run()
 
-        self.assertEqual(robot._get_successful_commands(), 1)
+        expected_count = len(robot._get_data()["commands"])
+
+        self.assertEqual(robot._get_successful_commands(), expected_count)
+
+    @patch('typetastic.bot_handlers.pause_flow')
+    def test_simple_command_set(self, mock_pause_flow):
+        """Test successful commands count run in simple set."""
+        # pylint: disable=protected-access
+
+        mock_pause_flow.return_value = True
+
+        data_file = "tests/data/typetastic-simple-command-set.yaml"
+        robot = typetastic.Robot()
+        robot.load(data_file)
+        robot.run()
+
+        expected_count = len(robot._get_data()["commands"])
+
+        self.assertEqual(robot._get_successful_commands(), expected_count)
+
+    @patch('typetastic.bot_handlers.pause_flow')
+    def test_chdir_command_set(self, mock_pause_flow):
+        """Test successful commands count run in chdir set."""
+        # pylint: disable=protected-access
+
+        mock_pause_flow.return_value = True
+
+        data_file = "tests/data/typetastic-chdir-command-set.yaml"
+        robot = typetastic.Robot()
+        robot.load(data_file)
+        robot.run()
+
+        expected_count = len(robot._get_data()["commands"])
+
+        self.assertEqual(robot._get_successful_commands(), expected_count)
 
 
 class TestConfigLoading(unittest.TestCase):
@@ -167,118 +224,6 @@ class TestConfigLoading(unittest.TestCase):
         self.assertEqual(prompt_string, "$ ")
         self.assertEqual(typing_color, "cyan")
         self.assertEqual(typing_speed, "supersonic")
-
-
-class TestPrintingCommands(unittest.TestCase):
-    """Test printing command strings.
-
-    string_to_type is somewhat confusing, need a better name.
-    """
-
-    def test_string_to_type_echo_hello_world(self):
-        """Test command string format for typing."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-        config = {"prompt-string": "$ ", "typing-color": "cyan"}
-        command = "echo 'Hello, World!'"
-
-        result = robot._string_to_type(config, command)
-        expected_result = "\x1b[1;36mecho 'Hello, World!'\x1b[0;0m"
-
-        self.assertEqual(result, expected_result)
-
-    def test_string_to_type_with_no_color_config(self):
-        """Test command string format for typing."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-        config = {"prompt-string": "$ "}
-        command = "echo 'Hello, World!'"
-
-        result = robot._string_to_type(config, command)
-        expected_result = "echo 'Hello, World!'"
-
-        self.assertEqual(result, expected_result)
-
-    def test_ls_command_response(self):
-        """Test command string format for typing."""
-
-        temp_output = StringIO()
-        commands = {
-            "config": {"prompt-string": "$ ", "typing-color": "cyan", "typing-speed": "supersonic"},
-            "commands": ["ls tests/data/tt-hello-world.yaml"]
-        }
-
-        robot = typetastic.Robot()
-        robot.load(commands)
-
-        sys.stdout = temp_output
-        robot.run()
-        sys.stdout = sys.__stdout__
-
-        (cmd, response, _) = temp_output.getvalue().split("\n", 2)
-
-        self.assertEqual(cmd, "$ \x1b[1;36mls tests/data/tt-hello-world.yaml\x1b[0;0m")
-        self.assertEqual(response, "tests/data/tt-hello-world.yaml\r")
-
-
-class TestMetaCommands(unittest.TestCase):
-    """Test typetastic meta commands."""
-
-    def test_newline_command(self):
-        """Test newline command."""
-
-        temp_output = StringIO()
-        commands = {
-            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["NEWLINE"]
-        }
-
-        robot = typetastic.Robot()
-        robot.load(commands)
-
-        sys.stdout = temp_output
-        robot.run()
-        sys.stdout = sys.__stdout__
-
-        self.assertEqual(temp_output.getvalue(), "$ \n$ \n")
-
-    @patch('typetastic.bot_handlers.pause_flow')
-    def test_pause_command(self, mock_pause_flow):
-        """Test pause command."""
-        mock_pause_flow.return_value = True
-
-        data = {
-            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["PAUSE"]
-        }
-
-        robot = typetastic.Robot()
-        robot.load(data)
-        robot.run()
-
-        self.assertEqual(mock_pause_flow.call_count, 1)
-
-
-class TestEditorCommands(unittest.TestCase):
-    """Test typetastic meta commands."""
-
-    @patch('typetastic.bot_handlers.pause_flow')
-    def test_run_editor_command(self, mock_pause_flow):
-        """Test running an editor command causes PAUSE."""
-
-        mock_pause_flow.return_value = True
-        data = {
-            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["vi test", "emacs test"]
-        }
-
-        robot = typetastic.Robot()
-        robot.load(data)
-        robot.run()
-
-        self.assertEqual(mock_pause_flow.call_count, 2)
 
 
 class TestChangeDirCommand(unittest.TestCase):
