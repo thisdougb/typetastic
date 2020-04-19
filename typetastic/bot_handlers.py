@@ -5,24 +5,29 @@ import pexpect
 
 
 def bot_handler_newline(command):
+    # pylint: disable=unused-argument
     """Handler for newline."""
-    if command == "NEWLINE":
-        return True
-    return False
+    print()
+    return True
 
 
 def bot_handler_pause(command):
+    # pylint: disable=unused-argument
     """Handler for pause."""
-    if command == "PAUSE":
-        _pause_flow()
-        return True
-    return False
-
-
-def bot_handler_ls(command):
-    """Handler for ls."""
-    _run_command(command)
+    pause_flow()
     return True
+
+
+def bot_handler_editor(command):
+    # pylint: disable=unused-argument
+    """Handler for vi."""
+    pause_flow()
+    return True
+
+
+def bot_handler_vi(command):
+    """Handler for vi."""
+    return bot_handler_editor(command)
 
 
 def bot_handler_default(command):
@@ -30,11 +35,11 @@ def bot_handler_default(command):
     return False
 
 
-def _pause_flow():
+def pause_flow():
     getch.getch()
 
 
-def _run_command(command):
+def run_command(command):
     """Run local command."""
 
     spawn_cmd = "/bin/bash -c '{0}'".format(command)

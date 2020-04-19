@@ -90,7 +90,7 @@ class TestRunLocalCommands(unittest.TestCase):
 
         self.assertFalse(result)
 
-    @patch('typetastic.bot_handlers._pause_flow')
+    @patch('typetastic.bot_handlers.pause_flow')
     def test_run_valid_command_set(self, mock_pause_flow):
         """Run basic ls command."""
         # pylint: disable=protected-access
@@ -244,7 +244,7 @@ class TestMetaCommands(unittest.TestCase):
 
         self.assertEqual(temp_output.getvalue(), "$ \n$ \n")
 
-    @patch('typetastic.bot_handlers._pause_flow')
+    @patch('typetastic.bot_handlers.pause_flow')
     def test_pause_command(self, mock_pause_flow):
         """Test pause command."""
         mock_pause_flow.return_value = True
@@ -276,7 +276,7 @@ class TestEditorCommands(unittest.TestCase):
 
         self.assertFalse(robot._is_editor("ls test"))
 
-    @patch('typetastic.bot_handlers._pause_flow')
+    @patch('typetastic.bot_handlers.pause_flow')
     def test_run_editor_command(self, mock_pause_flow):
         """Test running an editor command causes PAUSE."""
 

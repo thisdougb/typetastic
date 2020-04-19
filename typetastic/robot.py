@@ -110,9 +110,6 @@ class Robot:
                         self._pause_flow()
                         self.__successful_commands += 1
 
-                    elif command == "ls" or command.startswith("ls "):
-                        bothan.bot_handler_ls(command)
-
                     elif self._run_command(command, self.__current_directory):
                         self.__successful_commands += 1
 
