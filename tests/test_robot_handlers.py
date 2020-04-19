@@ -131,6 +131,7 @@ class TestSimulatedTyping(unittest.TestCase):
 
         temp_output = StringIO()
         text_with_color = self.get_string_to_simulate("this is colored text")
+        print(text_with_color)
 
         sys.stdout = temp_output
         bothan.simulate_typing(text_with_color, 0, 0, 0)
