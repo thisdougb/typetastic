@@ -14,7 +14,8 @@ def bot_handler_default(handler_data):
     current_directory = handler_data["current_directory"]
 
     (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
-    simulate_typing(command, speed_min, speed_max, return_key_delay)
+    simulated_typing = handler_data["simulated_typing"]
+    simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
 
     return run_command(command, current_directory)
 
