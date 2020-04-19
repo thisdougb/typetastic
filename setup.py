@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="typetastic",
-    version="0.0.1",
+    version="0.1.0",
     author="Doug Bridgens",
     author_email="typetastic@far-oeuf.com",
     description="Python utility to make recording screencasts easier.",
