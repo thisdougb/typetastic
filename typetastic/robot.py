@@ -9,6 +9,8 @@ import yaml
 import getch
 import pexpect
 
+from . import bot_handlers as bothan
+
 
 class Robot:
     """Robot that runs the commands."""
@@ -109,6 +111,9 @@ class Robot:
                         self._pause_flow()
                         self.__successful_commands += 1
 
+                    elif command == "ls" or command.startswith("ls "):
+                        bothan.bot_handler_ls(command)
+
                     elif self._run_command(command, self.__current_directory):
                         self.__successful_commands += 1
 
@@ -122,6 +127,19 @@ class Robot:
                 sys.stdout.flush()
 
             print()  # run ends, tidy up
+
+    @staticmethod
+    def _get_command_name(command):
+        """Returns name of the command."""
+        name = command
+
+        if " " in command:  # command has args
+            (name, _) = command.lower().split(" ", 1)
+
+        if "/" in name:  # command has path
+            (_, name) = name.rsplit("/", 1)
+
+        return name
 
     def _get_config(self, key):
         """Lookup and return the config value for key."""

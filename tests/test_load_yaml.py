@@ -310,3 +310,24 @@ class TestChangeDirCommand(unittest.TestCase):
         robot.run()
 
         self.assertEqual(robot._get_current_directory(), "/etc")
+
+
+class TestHelperMethods(unittest.TestCase):
+    """Test helper methods."""
+
+    def test_get_command_name(self):
+        """Test extracting the name of a command."""
+        # pylint: disable=protected-access
+        test_commands = [
+            "ls:ls",
+            "ls:ls -l",
+            "ls:ls -l /etc/",
+            "ls:/bin/ls -l /etc/",
+            "cd:cd ..",
+            "ssh:ssh root@somehost"
+        ]
+
+        robot = typetastic.Robot
+        for cmd in test_commands:
+            (name, full_command) = cmd.split(":", 1)
+            self.assertEqual(name, robot._get_command_name(full_command))
