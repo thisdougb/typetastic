@@ -1,13 +1,9 @@
 """TypeTastic"""
 
 import os
-import random
-import sys
-import time
 import yaml
 
-import getch
-import pexpect
+from . import bot_handlers as bothan
 
 
 class Robot:
@@ -63,7 +59,7 @@ class Robot:
             result = self._load_file(data_source)
 
         if result:
-            if "commands" in result:
+            if "commands" in result and isinstance(result["commands"], list):
                 self.__data["commands"] = result["commands"]
             if "config" in result:
                 # we .update() to merge into existing config defaults
@@ -85,43 +81,46 @@ class Robot:
         if "commands" in self.__data:
 
             prompt = self._get_config("prompt-string")
-            print(prompt, end="")
-            sys.stdout.flush()
+            bothan.emit_prompt(prompt)
 
             for command in self.__data["commands"]:
 
-                if command == "PAUSE":
-                    self._pause_flow()
+                # find the handler for this command, or use default
+                cmd_name = self._get_command_name(command)
+                fn_lookup = "bot_handler_{0}".format(cmd_name)
+                bothan_method = getattr(bothan, fn_lookup, bothan.bot_handler_default)
+
+                handler_data = {
+                    "command": command,
+                    "simulated_typing": self._string_to_type(self.__data["config"], command),
+                    "typing_speed": self._get_typing_speeds(typing_speed),
+                    "current_directory": self.__current_directory
+                }
+
+                if bothan_method(handler_data):
+                    bothan.emit_prompt(prompt)
                     self.__successful_commands += 1
-                    continue
 
-                elif command == 'NEWLINE':
-                    print()
-                    self.__successful_commands += 1
-
-                else:
-                    str_to_type = self._string_to_type(self.__data["config"], command)
-                    self._simulate_typing(str_to_type, typing_speed)
-
-                    # capture special commands, we don't want to execute
-                    # but do want to type out.
-                    if self._is_editor(command):
-                        self._pause_flow()
-                        self.__successful_commands += 1
-
-                    elif self._run_command(command, self.__current_directory):
-                        self.__successful_commands += 1
-
-                        # change dir, under the hood. we pass this into the shell
-                        # spawn.
-                        if command.startswith("cd "):
-                            (_, path) = command.split(" ")
-                            self.__current_directory = path
-
-                print(prompt, end="")
-                sys.stdout.flush()
+                    # change dir, under the hood. we pass this into the shell
+                    # spawn.
+                    if command.startswith("cd "):
+                        (_, path) = command.split(" ")
+                        self.__current_directory = path
 
             print()  # run ends, tidy up
+
+    @staticmethod
+    def _get_command_name(command):
+        """Returns name of the command."""
+        name = command.lower()
+
+        if " " in command:  # command has args
+            (name, _) = command.split(" ", 1)
+
+        if "/" in name:  # command has path
+            (_, name) = name.rsplit("/", 1)
+
+        return name
 
     def _get_config(self, key):
         """Lookup and return the config value for key."""
@@ -143,33 +142,12 @@ class Robot:
         return self.__successful_commands
 
     @staticmethod
-    def _is_editor(command):
-        """Returns true if command starts an editor, otherwise false."""
-        for editor in Robot.Editors:
-            if command.startswith("{0} ".format(editor)):
-                return True
-        return False
-
-    @staticmethod
-    def _pause_flow():
-        getch.getch()
-
-    @staticmethod
-    def _simulate_typing(command, speed=None):
-        """Simulates typing to stdout."""
+    def _get_typing_speeds(speed):
+        """Returns typing speeds."""
         if speed not in Robot.TypingSpeeds:
             speed = "moderate"
 
-        (speed_min, speed_max, return_key_delay) = Robot.TypingSpeeds[speed]
-
-        for char in command:
-            print(char, end="")
-            sys.stdout.flush()
-            char_delay = random.uniform(speed_min, speed_max)
-            time.sleep(char_delay)
-
-        time.sleep(return_key_delay)
-        print()  # newline required after typing command
+        return Robot.TypingSpeeds[speed]
 
     @staticmethod
     def _string_to_type(config, command):
@@ -202,17 +180,3 @@ class Robot:
             except yaml.YAMLError as error:
                 print("load_file: {0}".format(error))
                 return False
-
-    @staticmethod
-    def _run_command(command, current_dir):
-        """Run local command."""
-
-        spawn_cmd = "/bin/bash -c '{0}'".format(command)
-        child = pexpect.spawn(spawn_cmd, cwd=current_dir, timeout=None, encoding='utf-8')
-
-        for line in child:
-            print(line, end="")
-        child.close()
-
-        # 0 = success, 1 = failure in Unix, so invert result
-        return not bool(child.exitstatus)
