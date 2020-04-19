@@ -4,10 +4,19 @@ import getch
 import pexpect
 
 
-def bot_handler_pause():
-    """Handler for ls."""
-    _pause_flow()
-    return True
+def bot_handler_newline(command):
+    """Handler for newline."""
+    if command == "NEWLINE":
+        return True
+    return False
+
+
+def bot_handler_pause(command):
+    """Handler for pause."""
+    if command == "PAUSE":
+        _pause_flow()
+        return True
+    return False
 
 
 def bot_handler_ls(command):
@@ -16,8 +25,13 @@ def bot_handler_ls(command):
     return True
 
 
+def bot_handler_default(command):
+    """Handler for ls."""
+    return False
+
+
 def _pause_flow():
-    print("pause flow 2")
+    getch.getch()
 
 
 def _run_command(command):

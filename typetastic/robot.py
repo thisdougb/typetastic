@@ -92,13 +92,12 @@ class Robot:
 
             for command in self.__data["commands"]:
 
-                if command == "PAUSE":
-                    self._pause_flow()
-                    self.__successful_commands += 1
-                    continue
+                # find the handler for this command, or use default
+                cmd_name = self._get_command_name(command)
+                fn_lookup = "bot_handler_{0}".format(cmd_name)
+                bothan_method = getattr(bothan, fn_lookup, bothan.bot_handler_default)
 
-                elif command == 'NEWLINE':
-                    print()
+                if bothan_method(command):
                     self.__successful_commands += 1
 
                 else:
@@ -131,10 +130,10 @@ class Robot:
     @staticmethod
     def _get_command_name(command):
         """Returns name of the command."""
-        name = command
+        name = command.lower()
 
         if " " in command:  # command has args
-            (name, _) = command.lower().split(" ", 1)
+            (name, _) = command.split(" ", 1)
 
         if "/" in name:  # command has path
             (_, name) = name.rsplit("/", 1)
