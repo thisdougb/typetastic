@@ -98,8 +98,11 @@ class Robot:
                 }
 
                 if bothan_method(handler_data):
-                    bothan.emit_prompt(prompt)
                     self.__successful_commands += 1
+
+                    # trailing emit, to setup the next line. pause is a special case.
+                    if cmd_name != "pause":
+                        bothan.emit_prompt(prompt)
 
                     # change dir, under the hood. we pass this into the shell
                     # spawn.
