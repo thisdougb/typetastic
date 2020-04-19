@@ -104,13 +104,7 @@ class Robot:
                     str_to_type = self._string_to_type(self.__data["config"], command)
                     self._simulate_typing(str_to_type, typing_speed)
 
-                    # capture special commands, we don't want to execute
-                    # but do want to type out.
-                    if self._is_editor(command):
-                        self._pause_flow()
-                        self.__successful_commands += 1
-
-                    elif self._run_command(command, self.__current_directory):
+                    if self._run_command(command, self.__current_directory):
                         self.__successful_commands += 1
 
                         # change dir, under the hood. we pass this into the shell
@@ -155,14 +149,6 @@ class Robot:
     def _get_successful_commands(self):
         """Return the successful commands run."""
         return self.__successful_commands
-
-    @staticmethod
-    def _is_editor(command):
-        """Returns true if command starts an editor, otherwise false."""
-        for editor in Robot.Editors:
-            if command.startswith("{0} ".format(editor)):
-                return True
-        return False
 
     @staticmethod
     def _pause_flow():

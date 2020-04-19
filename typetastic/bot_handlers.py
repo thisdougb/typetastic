@@ -4,6 +4,11 @@ import getch
 import pexpect
 
 
+def bot_handler_default(command):
+    """Handler for ls."""
+    return False
+
+
 def bot_handler_newline(command):
     # pylint: disable=unused-argument
     """Handler for newline."""
@@ -25,14 +30,14 @@ def bot_handler_editor(command):
     return True
 
 
-def bot_handler_vi(command):
-    """Handler for vi."""
+def bot_handler_emacs(command):
+    """Handler for emacs."""
     return bot_handler_editor(command)
 
 
-def bot_handler_default(command):
-    """Handler for ls."""
-    return False
+def bot_handler_vi(command):
+    """Handler for vi."""
+    return bot_handler_editor(command)
 
 
 def pause_flow():

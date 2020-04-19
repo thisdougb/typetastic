@@ -264,18 +264,6 @@ class TestMetaCommands(unittest.TestCase):
 class TestEditorCommands(unittest.TestCase):
     """Test typetastic meta commands."""
 
-    def test_newline_command(self):
-        """Test command string format for typing."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-
-        self.assertTrue(robot._is_editor("vi test"))
-        self.assertTrue(robot._is_editor("vim test"))
-        self.assertTrue(robot._is_editor("emacs test"))
-
-        self.assertFalse(robot._is_editor("ls test"))
-
     @patch('typetastic.bot_handlers.pause_flow')
     def test_run_editor_command(self, mock_pause_flow):
         """Test running an editor command causes PAUSE."""
@@ -283,14 +271,14 @@ class TestEditorCommands(unittest.TestCase):
         mock_pause_flow.return_value = True
         data = {
             "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["vi test"]
+            "commands": ["vi test", "emacs test"]
         }
 
         robot = typetastic.Robot()
         robot.load(data)
         robot.run()
 
-        self.assertEqual(mock_pause_flow.call_count, 1)
+        self.assertEqual(mock_pause_flow.call_count, 2)
 
 
 class TestChangeDirCommand(unittest.TestCase):
