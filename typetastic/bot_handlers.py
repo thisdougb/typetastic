@@ -1,5 +1,6 @@
 """Handlers for commands."""
 
+import re
 import getch
 import pexpect
 import random
@@ -41,6 +42,45 @@ def bot_handler_editor(handler_data):
     return True
 
 
+# SSH
+def bot_handler_ssh(handler_data):
+    """SSH login."""
+    print(handler_data)
+    if "command" in handler_data:
+        command = handler_data["command"]
+
+        # user@host format
+
+def parse_ssh_user_host(command):
+    """Find user and host."""
+
+    user_patterns = [
+        r" ([a-z0-9\.]+)@",
+        r"-l ([a-z0-9\.]+) "
+    ]
+
+    user = None
+    for pattern in user_patterns:
+        comp_pattern = re.compile(pattern)
+        result = comp_pattern.search(command)
+        if result:
+            user = result.group(1)
+
+    host = None
+    host_patterns = [
+        r"@([a-z0-9\.]+)",
+        r" ([a-z0-9\.]+)$"
+    ]
+
+    for pattern in host_patterns:
+        comp_pattern = re.compile(pattern)
+        result = comp_pattern.search(command)
+        if result:
+            host = result.group(1)
+
+    return (user, host)
+
+# EDITORS
 def bot_handler_emacs(handler_data):
     """Handler for emacs."""
     return bot_handler_editor(handler_data)
