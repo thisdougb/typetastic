@@ -59,7 +59,7 @@ class Robot:
             result = self._load_file(data_source)
 
         if result:
-            if "commands" in result:
+            if "commands" in result and isinstance(result["commands"], list):
                 self.__data["commands"] = result["commands"]
             if "config" in result:
                 # we .update() to merge into existing config defaults
