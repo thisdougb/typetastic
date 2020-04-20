@@ -61,11 +61,12 @@ def bot_handler_ssh(handler_data):
 
         try:
             ssh_conn.login(host, user)
+            return not ssh_conn.closed
 
         except pexpect.pxssh.ExceptionPxssh as error:
             print("ssh login failed: {0}".format(error))
 
-    return not ssh_conn.closed
+    return False
 
 
 def bot_handler_exit(handler_data):
@@ -78,7 +79,9 @@ def bot_handler_exit(handler_data):
 
         ssh_conn = handler_data["remote"]
         ssh_conn.logout()
-    return ssh_conn.closed
+        return ssh_conn.closed
+
+    return False
 
 
 def parse_ssh_user_host(command):

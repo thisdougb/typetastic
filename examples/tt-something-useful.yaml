@@ -1,10 +1,14 @@
 config:
     prompt-string: "$ "
     typing-color: cyan
-    typing-speed: moderate
+    typing-speed: supersonic
 
 commands:
     - echo ~
     - ls -l ~/.zshrc
-    - PAUSE
     - cat ~/.zshrc
+    - ssh:
+        - ssh root@cardkist.com
+        - hostname
+        - exit
+    - hostname

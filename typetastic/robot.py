@@ -88,13 +88,13 @@ class Robot:
             for command in self.__data["commands"]:
 
                 if isinstance(command, dict) and "ssh" in command:
-                    # set up session
-
+                    ssh_conn = pxssh.pxssh()  # must be shared across all commands
                     remote_directory = None
+
                     for remote_command in command["ssh"]:
 
                         handler_data = {
-                            "remote": pxssh.pxssh(),
+                            "remote": ssh_conn,
                             "command": remote_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
                             "current_directory": remote_directory,
