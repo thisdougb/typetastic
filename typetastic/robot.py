@@ -32,7 +32,8 @@ class Robot:
         self.__data["config"] = {
             "typing-color": "cyan",
             "typing-speed": "moderate",
-            "prompt-string": "$ "
+            "prompt-string": "$ ",
+            "remote-prompt": "[ssh] $ "
         }
         self.__successful_commands = 0
         self.__current_directory = os.getcwd()
@@ -89,45 +90,44 @@ class Robot:
                 if isinstance(command, dict) and "ssh" in command:
                     # set up session
 
-                    ssh_conn = pxssh.pxssh()
-                    # adjust prompt value
-
+                    remote_directory = None
                     for remote_command in command["ssh"]:
 
                         handler_data = {
-                            "remote": ssh_conn,
+                            "remote": pxssh.pxssh(),
                             "command": remote_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
-                            "current_directory": self.__current_directory,
+                            "current_directory": remote_directory,
                             "config": self.__data["config"]
                         }
 
-                        if self.run_task(handler_data):
+                        result = self.run_task(handler_data)
+
+                        if result:
                             self.__successful_commands += 1
 
-                        # trailing emit, to setup the next line. pause is a special case.
-                        if remote_command == "exit":
-                            bothan.emit_prompt(prompt)
+                        if result and remote_command.startswith("cd "):
+                            (_, path) = command.split(" ")
+                            remote_directory = path
 
-                    ssh_conn = None
+                else:
 
-                    continue  # remote commands done
+                    handler_data = {
+                        "remote": None,
+                        "command": command,
+                        "typing_speed": self._get_typing_speeds(typing_speed),
+                        "current_directory": self.__current_directory,
+                        "config": self.__data["config"]
+                    }
 
-                handler_data = {
-                    "command": command,
-                    "typing_speed": self._get_typing_speeds(typing_speed),
-                    "current_directory": self.__current_directory,
-                    "config": self.__data["config"]
-                }
+                    if self.run_task(handler_data):
+                        self.__successful_commands += 1
 
-                if self.run_task(handler_data):
-                    self.__successful_commands += 1
-
-                    # change dir, under the hood. we pass this into the shell
-                    # spawn.
-                    if command.startswith("cd "):
-                        (_, path) = command.split(" ")
-                        self.__current_directory = path
+                        # change dir, under the hood. we pass this into the shell
+                        # spawn.
+                        if command.startswith("cd "):
+                            (_, path) = command.split(" ")
+                            self.__current_directory = path
 
             print()  # run ends, tidy up
 
@@ -144,13 +144,15 @@ class Robot:
         task_result = bothan_method(handler_data)
 
         # trailing emit prompt, to setup the next line. pause is a special case.
-        if not command.startswith("PAUSE"):
-            if "config" in handler_data and "prompt-string" in handler_data["config"]:
-                prompt = handler_data["config"]["prompt-string"]
-            else:
-                prompt = ""
+        if command.startswith("PAUSE"):
+            return task_result
 
-            bothan.emit_prompt(prompt)
+        prompt = handler_data["config"]["prompt-string"]
+        # override prompt if we are still in a remote session
+        if handler_data["remote"] and not command == "exit":
+            prompt = handler_data["config"]["remote-prompt"]
+
+        bothan.emit_prompt(prompt)
 
         return task_result
 

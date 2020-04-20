@@ -32,7 +32,13 @@ class TestLoadData(unittest.TestCase):
         # pylint: disable=protected-access
 
         data = {
-            "config": {"prompt-string": "$ ", "typing-color": "cyan", "typing-speed": "supersonic"},
+            "config": {
+                "prompt-string": "$ ",
+                "remote-prompt": "[ssh] $ ",
+                "typing-color": "cyan",
+                "typing-speed":
+                "supersonic"
+            },
             "commands": ["echo 'Hello, World!'", "ls"]
         }
         robot = typetastic.Robot()

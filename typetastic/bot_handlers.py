@@ -18,7 +18,7 @@ def bot_handler_default(handler_data):
     simulated_typing = handler_data["simulated_typing"]
     simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
 
-    if "remote" in handler_data:
+    if handler_data["remote"]:
         return run_ssh_command(handler_data)
 
     return run_command(command, current_directory)
