@@ -88,31 +88,28 @@ class Robot:
 
                 if isinstance(command, dict) and "ssh" in command:
                     # set up session
-                    try:
-                        ssh_conn = pxssh.pxssh()
-                        # adjust prompt value
 
-                        for remote_command in command["ssh"]:
+                    ssh_conn = pxssh.pxssh()
+                    # adjust prompt value
 
-                            handler_data = {
-                                "remote": ssh_conn,
-                                "command": remote_command,
-                                "typing_speed": self._get_typing_speeds(typing_speed),
-                                "current_directory": self.__current_directory,
-                                "config": self.__data["config"]
-                            }
+                    for remote_command in command["ssh"]:
 
-                            if self.run_task(handler_data):
-                                self.__successful_commands += 1
+                        handler_data = {
+                            "remote": ssh_conn,
+                            "command": remote_command,
+                            "typing_speed": self._get_typing_speeds(typing_speed),
+                            "current_directory": self.__current_directory,
+                            "config": self.__data["config"]
+                        }
 
-                            # trailing emit, to setup the next line. pause is a special case.
-                            if remote_command == "exit":
-                                bothan.emit_prompt(prompt)
+                        if self.run_task(handler_data):
+                            self.__successful_commands += 1
 
-                        ssh_conn = None
+                        # trailing emit, to setup the next line. pause is a special case.
+                        if remote_command == "exit":
+                            bothan.emit_prompt(prompt)
 
-                    except pxssh.ExceptionPxssh as error:
-                        print("ssh login failed: {0}".format(error))
+                    ssh_conn = None
 
                     continue  # remote commands done
 
