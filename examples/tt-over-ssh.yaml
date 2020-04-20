@@ -1,0 +1,17 @@
+config:
+    prompt-string: "$ "
+    typing-color: cyan
+    typing-speed: supersonic
+
+commands:
+    - echo ~
+    - ls -l ~/.zshrc
+    - ssh:
+        - ssh root@cardkist.com
+        - hostname
+        - cd /var
+        - pwd
+        - cd ~
+        - pwd
+        - exit
+    - hostname
