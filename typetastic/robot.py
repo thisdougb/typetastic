@@ -108,7 +108,7 @@ class Robot:
                             self.__successful_commands += 1
 
                         if result and remote_command.startswith("cd "):
-                            (_, path) = command.split(" ")
+                            (_, path) = remote_command.split(" ")
                             remote_directory = path
 
                 else:
