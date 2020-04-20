@@ -102,7 +102,8 @@ class Robot:
                                 "command": remote_command,
                                 "simulated_typing": simulated_typing,
                                 "typing_speed": self._get_typing_speeds(typing_speed),
-                                "current_directory": self.__current_directory
+                                "current_directory": self.__current_directory,
+                                "config": self.__data["config"]
                             }
 
                             if bothan_method(handler_data):
@@ -146,6 +147,18 @@ class Robot:
                         self.__current_directory = path
 
             print()  # run ends, tidy up
+
+    @staticmethod
+    def run_task(handler_data):
+        """Run a task from handler data."""
+
+        command = handler_data["command"]
+        bothan_method = Robot._get_bothan_method(command)
+
+        config = handler_data["config"]
+        handler_data["simulated_typing"] = Robot._string_to_type(config, command)
+
+        return bothan_method(handler_data)
 
     @staticmethod
     def _get_bothan_method(command):
