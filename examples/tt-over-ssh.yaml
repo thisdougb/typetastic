@@ -6,9 +6,12 @@ config:
 commands:
     - echo ~
     - ls -l ~/.zshrc
-    - cat ~/.zshrc
     - ssh:
         - ssh root@cardkist.com
         - hostname
+        - cd /var
+        - pwd
+        - cd ~
+        - pwd
         - exit
     - hostname

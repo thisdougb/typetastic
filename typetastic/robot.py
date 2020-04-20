@@ -32,7 +32,8 @@ class Robot:
         self.__data["config"] = {
             "typing-color": "cyan",
             "typing-speed": "moderate",
-            "prompt-string": "$ "
+            "prompt-string": "$ ",
+            "remote-prompt": "[ssh] $ "
         }
         self.__successful_commands = 0
         self.__current_directory = os.getcwd()
@@ -81,71 +82,80 @@ class Robot:
 
         if "commands" in self.__data:
 
+            local_directory = None
             prompt = self._get_config("prompt-string")
             bothan.emit_prompt(prompt)
 
             for command in self.__data["commands"]:
 
                 if isinstance(command, dict) and "ssh" in command:
-                    # set up session
-                    try:
-                        ssh_conn = pxssh.pxssh()
+                    ssh_conn = pxssh.pxssh()  # must be shared across all commands
+                    remote_directory = None
 
-                        for remote_command in command["ssh"]:
+                    for remote_command in command["ssh"]:
 
-                            bothan_method = self._get_bothan_method(remote_command)
-                            simulated_typing = self._string_to_type(self.__data["config"],
-                                                                    remote_command)
+                        handler_data = {
+                            "remote": ssh_conn,
+                            "command": remote_command,
+                            "typing_speed": self._get_typing_speeds(typing_speed),
+                            "current_directory": remote_directory,
+                            "config": self.__data["config"]
+                        }
 
-                            handler_data = {
-                                "remote": ssh_conn,
-                                "command": remote_command,
-                                "simulated_typing": simulated_typing,
-                                "typing_speed": self._get_typing_speeds(typing_speed),
-                                "current_directory": self.__current_directory
-                            }
+                        result = self.run_task(handler_data)
 
-                            if bothan_method(handler_data):
-                                self.__successful_commands += 1
+                        if result:
+                            self.__successful_commands += 1
 
-                            # trailing emit, to setup the next line. pause is a special case.
-                            if remote_command == "exit":
-                                bothan.emit_prompt(prompt)
+                        if result and remote_command.startswith("cd "):
+                            (_, path) = remote_command.split(" ")
+                            remote_directory = path
 
-                            elif not remote_command.startswith("PAUSE"):
-                                bothan.emit_prompt("[ssh] {0}".format(prompt))
+                else:
 
-                        ssh_conn = None
+                    handler_data = {
+                        "remote": None,
+                        "command": command,
+                        "typing_speed": self._get_typing_speeds(typing_speed),
+                        "current_directory": local_directory,
+                        "config": self.__data["config"]
+                    }
 
-                    except pxssh.ExceptionPxssh as error:
-                        print("ssh login failed: {0}".format(error))
+                    if self.run_task(handler_data):
+                        self.__successful_commands += 1
 
-                    continue  # remote commands done
-
-                # find the handler for this command, or use default
-                bothan_method = self._get_bothan_method(command)
-
-                handler_data = {
-                    "command": command,
-                    "simulated_typing": self._string_to_type(self.__data["config"], command),
-                    "typing_speed": self._get_typing_speeds(typing_speed),
-                    "current_directory": self.__current_directory
-                }
-
-                if bothan_method(handler_data):
-                    self.__successful_commands += 1
-
-                    # trailing emit, to setup the next line. pause is a special case.
-                    if not command.startswith("PAUSE"):
-                        bothan.emit_prompt(prompt)
-
-                    # change dir, under the hood. we pass this into the shell
-                    # spawn.
-                    if command.startswith("cd "):
-                        (_, path) = command.split(" ")
-                        self.__current_directory = path
+                        # change dir, under the hood. we pass this into the shell
+                        # spawn.
+                        if command.startswith("cd "):
+                            (_, path) = command.split(" ")
+                            local_directory = path
 
             print()  # run ends, tidy up
+
+    @staticmethod
+    def run_task(handler_data):
+        """Run a task from handler data."""
+
+        command = handler_data["command"]
+        bothan_method = Robot._get_bothan_method(command)
+
+        config = handler_data["config"]
+        handler_data["simulated_typing"] = Robot._string_to_type(config, command)
+
+        task_result = bothan_method(handler_data)
+
+        # trailing emit prompt, to setup the next line. pause is a special case.
+        if command.startswith("PAUSE"):
+            return task_result
+
+        prompt = handler_data["config"]["prompt-string"]
+        # override prompt if we are still in a remote session
+        if handler_data["remote"] and not command == "exit":
+            prompt = handler_data["config"]["remote-prompt"]
+
+        bothan.emit_prompt(prompt)
+
+        return task_result
 
     @staticmethod
     def _get_bothan_method(command):
@@ -180,10 +190,6 @@ class Robot:
     def _get_data(self):
         """Return the data dict."""
         return self.__data
-
-    def _get_current_directory(self):
-        """Return the current directory."""
-        return self.__current_directory
 
     def _get_successful_commands(self):
         """Return the successful commands run."""
