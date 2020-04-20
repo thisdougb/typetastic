@@ -90,31 +90,24 @@ class Robot:
                     # set up session
                     try:
                         ssh_conn = pxssh.pxssh()
+                        # adjust prompt value
 
                         for remote_command in command["ssh"]:
-
-                            bothan_method = self._get_bothan_method(remote_command)
-                            simulated_typing = self._string_to_type(self.__data["config"],
-                                                                    remote_command)
 
                             handler_data = {
                                 "remote": ssh_conn,
                                 "command": remote_command,
-                                "simulated_typing": simulated_typing,
                                 "typing_speed": self._get_typing_speeds(typing_speed),
                                 "current_directory": self.__current_directory,
                                 "config": self.__data["config"]
                             }
 
-                            if bothan_method(handler_data):
+                            if self.run_task(handler_data):
                                 self.__successful_commands += 1
 
                             # trailing emit, to setup the next line. pause is a special case.
                             if remote_command == "exit":
                                 bothan.emit_prompt(prompt)
-
-                            elif not remote_command.startswith("PAUSE"):
-                                bothan.emit_prompt("[ssh] {0}".format(prompt))
 
                         ssh_conn = None
 
@@ -123,22 +116,15 @@ class Robot:
 
                     continue  # remote commands done
 
-                # find the handler for this command, or use default
-                bothan_method = self._get_bothan_method(command)
-
                 handler_data = {
                     "command": command,
-                    "simulated_typing": self._string_to_type(self.__data["config"], command),
                     "typing_speed": self._get_typing_speeds(typing_speed),
-                    "current_directory": self.__current_directory
+                    "current_directory": self.__current_directory,
+                    "config": self.__data["config"]
                 }
 
-                if bothan_method(handler_data):
+                if self.run_task(handler_data):
                     self.__successful_commands += 1
-
-                    # trailing emit, to setup the next line. pause is a special case.
-                    if not command.startswith("PAUSE"):
-                        bothan.emit_prompt(prompt)
 
                     # change dir, under the hood. we pass this into the shell
                     # spawn.
@@ -158,7 +144,18 @@ class Robot:
         config = handler_data["config"]
         handler_data["simulated_typing"] = Robot._string_to_type(config, command)
 
-        return bothan_method(handler_data)
+        task_result = bothan_method(handler_data)
+
+        # trailing emit prompt, to setup the next line. pause is a special case.
+        if not command.startswith("PAUSE"):
+            if "config" in handler_data and "prompt-string" in handler_data["config"]:
+                prompt = handler_data["config"]["prompt-string"]
+            else:
+                prompt = ""
+
+            bothan.emit_prompt(prompt)
+
+        return task_result
 
     @staticmethod
     def _get_bothan_method(command):
