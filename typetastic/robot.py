@@ -82,6 +82,7 @@ class Robot:
 
         if "commands" in self.__data:
 
+            local_directory = None
             prompt = self._get_config("prompt-string")
             bothan.emit_prompt(prompt)
 
@@ -116,7 +117,7 @@ class Robot:
                         "remote": None,
                         "command": command,
                         "typing_speed": self._get_typing_speeds(typing_speed),
-                        "current_directory": self.__current_directory,
+                        "current_directory": local_directory,
                         "config": self.__data["config"]
                     }
 
@@ -127,7 +128,7 @@ class Robot:
                         # spawn.
                         if command.startswith("cd "):
                             (_, path) = command.split(" ")
-                            self.__current_directory = path
+                            local_directory = path
 
             print()  # run ends, tidy up
 
@@ -189,10 +190,6 @@ class Robot:
     def _get_data(self):
         """Return the data dict."""
         return self.__data
-
-    def _get_current_directory(self):
-        """Return the current directory."""
-        return self.__current_directory
 
     def _get_successful_commands(self):
         """Return the successful commands run."""

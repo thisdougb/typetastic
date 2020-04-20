@@ -1,6 +1,8 @@
 """Test Load Commands."""
 
 import copy
+from io import StringIO
+import sys
 from unittest.mock import patch
 import unittest
 import typetastic
@@ -294,14 +296,22 @@ class TestChangeDirCommand(unittest.TestCase):
 
         data = {
             "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["cd /etc"]
+            "commands": ["cd /var", "pwd"]
         }
+
+        temp_output = StringIO()
 
         robot = typetastic.Robot()
         robot.load(data)
+        sys.stdout = temp_output
         robot.run()
+        sys.stdout = sys.__stdout__
 
-        self.assertEqual(robot._get_current_directory(), "/etc")
+        output = temp_output.getvalue()
+        snippet = "/var\r\n$ \n"
+        snippet_in_output = output[-(len(snippet)):]
+
+        self.assertEqual(snippet_in_output, snippet)
 
 
 class TestHelperMethods(unittest.TestCase):
