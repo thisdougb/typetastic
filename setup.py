@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="typetastic",
-    version="0.1.0",
+    version="1.0.0",
     author="Doug Bridgens",
     author_email="typetastic@far-oeuf.com",
-    description="Python utility to make recording screencasts easier.",
+    description="Python tool for building great screencasts, presentations, video tutorials..",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/thisdougb/typetastic",
@@ -16,7 +16,9 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: Education :: Computer Aided Instruction (CAI)"
     ],
     python_requires='>=3.6',
     install_requires=[
