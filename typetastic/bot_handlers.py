@@ -136,6 +136,36 @@ def pause_flow():
     getch.getch()
 
 
+def bot_handler_cd(handler_data):
+    """Run cd command.
+
+    We append pwd to the command to get the real path of the change.
+    We set (by reference) the new path back up via the data_handler.
+    """
+
+    if handler_data["remote"]:
+        return run_ssh_cd_command(handler_data)
+
+    (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
+    simulated_typing = handler_data["simulated_typing"]
+    simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
+
+    command = handler_data["command"]
+    current_dir = handler_data["current_directory"]
+
+    spawn_cmd = "/bin/bash -c '{0} && pwd'".format(command)
+    child = pexpect.spawn(spawn_cmd, cwd=current_dir, timeout=None, encoding='utf-8')
+
+    for line in child:
+        if line.startswith("/"):
+            handler_data["current_directory"] = line.rstrip()
+        else:
+            print(line, end="")
+    child.close()
+
+    return not bool(child.exitstatus)
+
+
 def run_command(command, current_dir):
     """Run local command."""
 
@@ -148,6 +178,40 @@ def run_command(command, current_dir):
 
     # 0 = success, 1 = failure in Unix, so invert result
     return not bool(child.exitstatus)
+
+
+def run_ssh_cd_command(handler_data):
+    """Run cd over ssh.
+
+    A bit hairy... We must send and parse pwd, to get the real path.
+    We set (by reference) the new path back up via the data_handler.
+    """
+
+    command = handler_data["command"]
+    ssh_conn = handler_data["remote"]
+
+    if ssh_conn:
+        ssh_conn.sendline(command)
+        ssh_conn.prompt()
+        print(ssh_conn.before[len(command)+2:].decode("utf-8"), end="")
+
+        ssh_conn.sendline("echo $?")
+        ssh_conn.prompt()
+        retval = ssh_conn.before[-3:-2].decode("utf-8")
+        if retval == "0":
+            ssh_conn.sendline("pwd")
+            ssh_conn.prompt()
+
+            # returned output is, eg, 'pwd\r\n/tmp\r\n'
+            directory = ssh_conn.before.decode("utf-8").rstrip()
+            (_, directory) = directory.split("/", 1)
+            directory = "/{0}".format(directory)
+            handler_data["current_directory"] = directory
+
+            return True
+
+    # 0 = success, 1 = failure in Unix, so invert result
+    return False
 
 
 def run_ssh_command(handler_data):
