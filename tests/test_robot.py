@@ -376,22 +376,22 @@ class TestChangeDirCommand(unittest.TestCase):
 
         data = {
             "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["cd /var", "pwd"]
+            "commands": ["cd /usr", "pwd"]
         }
 
         temp_output = StringIO()
 
         robot = typetastic.Robot()
         robot.load(data)
+
         sys.stdout = temp_output
         robot.run()
         sys.stdout = sys.__stdout__
 
-        output = temp_output.getvalue()
-        snippet = "/var\r\n$ \n"
-        snippet_in_output = output[-(len(snippet)):]
+        result = temp_output.getvalue()
+        expected_ending = "/usr\r\n$ \n"
 
-        self.assertEqual(snippet_in_output, snippet)
+        self.assertEqual(result[-(len(expected_ending)):], "/usr\r\n$ \n")
 
 
 class TestHelperMethods(unittest.TestCase):
