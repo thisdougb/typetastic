@@ -376,7 +376,7 @@ class TestChangeDirCommand(unittest.TestCase):
 
         data = {
             "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["cd /usr", "pwd"]
+            "commands": ["cd /tmp", "pwd"]
         }
 
         temp_output = StringIO()
@@ -391,7 +391,7 @@ class TestChangeDirCommand(unittest.TestCase):
         result = temp_output.getvalue()
         expected_ending = "/usr\r\n$ \n"
 
-        self.assertEqual(result[-(len(expected_ending)):], "/usr\r\n$ \n")
+        self.assertEqual(result[-(len(expected_ending)):], "/tmp\r\n$ \n")
 
 
 class TestHelperMethods(unittest.TestCase):
