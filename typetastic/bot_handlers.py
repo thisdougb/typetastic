@@ -136,6 +136,32 @@ def pause_flow():
     getch.getch()
 
 
+def bot_handler_cd(handler_data):
+    """Run cd command.
+
+    We append pwd to the command to get the real path of the change.
+    We set (by reference) the new path back up via the data_handler."""
+
+    (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
+    simulated_typing = handler_data["simulated_typing"]
+    simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
+
+    command = handler_data["command"]
+    current_dir = handler_data["current_directory"]
+
+    spawn_cmd = "/bin/bash -c '{0} && pwd'".format(command)
+    child = pexpect.spawn(spawn_cmd, cwd=current_dir, timeout=None, encoding='utf-8')
+
+    for line in child:
+        if line.startswith("/"):
+            handler_data["current_directory"] = line.rstrip()
+        else:
+            print(line, end="")
+    child.close()
+
+    return not bool(child.exitstatus)
+
+
 def run_command(command, current_dir):
     """Run local command."""
 

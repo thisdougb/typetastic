@@ -120,8 +120,7 @@ class Robot:
                         # change dir, under the hood. we pass this into the shell
                         # spawn.
                         if command.startswith("cd "):
-                            (_, path) = command.split(" ")
-                            local_directory = path
+                            local_directory = handler_data["current_directory"]
 
             print()  # run ends, tidy up
 
