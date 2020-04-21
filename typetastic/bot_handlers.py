@@ -187,7 +187,6 @@ def run_ssh_cd_command(handler_data):
     We set (by reference) the new path back up via the data_handler.
     """
 
-    print("SSH CD ", handler_data)
     command = handler_data["command"]
     ssh_conn = handler_data["remote"]
 
