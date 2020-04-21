@@ -1,0 +1,21 @@
+config:
+    prompt-string: "$ "
+    remote-prompt: "[ssh] # "
+    typing-color: bright-green
+    typing-speed: moderate
+
+commands:
+    - clear
+    - pip3 list | grep typetastic
+    - ssh:
+        - ssh root@cardkist.com
+        - PAUSE
+        - hostname
+        - cd /var
+        - pwd
+        - cd ~
+        - pwd
+        - exit
+    - hostname
+    - NEWLINE
+    - cat examples/tt-using-ssh.yaml

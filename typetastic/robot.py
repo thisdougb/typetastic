@@ -5,18 +5,11 @@ from pexpect import pxssh
 import yaml
 
 from . import bot_handlers as bothan
+import typetastic.text_colors as text_colors
 
 
 class Robot:
     """Robot that runs the commands."""
-
-    TextColors = {
-        "blue": "\033[1;34m",
-        "cyan": "\033[1;36m",
-        "green": "\033[0;32m",
-        "red": "\033[1;31m",
-        "reset": "\033[0;0m"
-    }
 
     # min typing speed, max typing speed, return key delay
     TypingSpeeds = {
@@ -207,13 +200,11 @@ class Robot:
     def _string_to_type(config, command):
         """Returns the formatted string to type."""
 
-        color = ""
-        color_reset = ""
+        color_reset = text_colors.TextColors.get_color_code("reset")
         if "typing-color" in config:
-            if config["typing-color"] in Robot.TextColors:
-                color_name = config["typing-color"]
-                color = Robot.TextColors[color_name]
-                color_reset = Robot.TextColors["reset"]
+            color = text_colors.TextColors.get_color_code(config["typing-color"])
+        else:
+            color = ""
 
         command_string = "{0}{1}{2}".format(color, command, color_reset)
         return command_string

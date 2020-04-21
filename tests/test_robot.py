@@ -228,7 +228,87 @@ class TestCommandRunner(unittest.TestCase):
         }
 
         mock_default_handler.return_value = True
-        expected_simulated_text = "\x1b[1;36mls\x1b[0;0m"
+        expected_simulated_text = "\x1b[0;36mls\x1b[0;0m"
+
+        robot = typetastic.Robot
+        result = robot.run_task(handler_data)
+
+        self.assertTrue(result)
+        self.assertTrue("simulated_typing" in handler_data)
+        self.assertEqual(handler_data["simulated_typing"], expected_simulated_text)
+
+    @patch('typetastic.bot_handlers.bot_handler_default')
+    def test_run_task_with_handler_is_bold_text(self, mock_default_handler):
+        """Test run_task with handler_data using ls command."""
+
+        handler_data = {
+            "remote": None,
+            "command": "ls",
+            "typing_speed": (0, 0, 0),
+            "current_directory": None,
+            "config": {
+                "prompt-string": "$ ",
+                "typing-color": "bold-green",
+                "typing-speed": "supersonic"
+            }
+        }
+
+        mock_default_handler.return_value = True
+        expected_simulated_text = "\x1b[1;32mls\x1b[0;0m"
+
+        robot = typetastic.Robot
+        result = robot.run_task(handler_data)
+
+        self.assertTrue(result)
+        self.assertTrue("simulated_typing" in handler_data)
+        self.assertEqual(handler_data["simulated_typing"], expected_simulated_text)
+
+    @patch('typetastic.bot_handlers.bot_handler_default')
+    def test_run_task_with_handler_is_bright_text(self, mock_default_handler):
+        """Test run_task with handler_data using ls command."""
+
+        handler_data = {
+            "remote": None,
+            "command": "ls",
+            "typing_speed": (0, 0, 0),
+            "current_directory": None,
+            "config": {
+                "prompt-string": "$ ",
+                "typing-color": "bright-green",
+                "typing-speed":
+                "supersonic"
+            }
+        }
+
+        mock_default_handler.return_value = True
+        expected_simulated_text = "\x1b[0;92mls\x1b[0;0m"
+
+        robot = typetastic.Robot
+        result = robot.run_task(handler_data)
+
+        self.assertTrue(result)
+        self.assertTrue("simulated_typing" in handler_data)
+        self.assertEqual(handler_data["simulated_typing"], expected_simulated_text)
+
+    @patch('typetastic.bot_handlers.bot_handler_default')
+    def test_run_task_with_handler_is_bold_bright_text(self, mock_default_handler):
+        """Test run_task with handler_data using ls command."""
+
+        handler_data = {
+            "remote": None,
+            "command": "ls",
+            "typing_speed": (0, 0, 0),
+            "current_directory": None,
+            "config": {
+                "prompt-string": "$ ",
+                "typing-color": "bold-bright-green",
+                "typing-speed":
+                "supersonic"
+            }
+        }
+
+        mock_default_handler.return_value = True
+        expected_simulated_text = "\x1b[1;92mls\x1b[0;0m"
 
         robot = typetastic.Robot
         result = robot.run_task(handler_data)
