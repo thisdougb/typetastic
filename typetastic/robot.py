@@ -1,13 +1,13 @@
 """TypeTastic"""
 
 import time
-import os
+import yaml
 import pexpect
 from pexpect import pxssh
-import yaml
 
-from . import bot_handlers as bothan
+
 import typetastic.text_colors as text_colors
+from . import bot_handlers as bothan
 
 
 class Robot:
