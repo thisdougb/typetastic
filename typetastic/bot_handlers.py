@@ -1,11 +1,11 @@
 """Handlers for commands."""
 
-import re
-import getch
-import pexpect
 import random
+import re
 import sys
 import time
+import getch
+import pexpect
 
 
 def bot_handler_default(handler_data):
@@ -156,7 +156,6 @@ def run_command(handler_data):
     time.sleep(delay)  # at least 0.2 seems to work, otherwise expect buffer is empty
     retval = False
     while True:
-        # session.expect_exact(['\r\n', pexpect.EOF, pexpect.TIMEOUT])
         session.expect_exact(["\r\n", prompt, pexpect.EOF, pexpect.TIMEOUT])
         if session.before.isdigit():
             retval = not bool(int(session.before))
