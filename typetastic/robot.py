@@ -98,7 +98,6 @@ class Robot:
 
         if "commands" in self.__data:
 
-            local_directory = None
             prompt = self._get_config("prompt-string")
             bothan.emit_prompt(prompt)
 
@@ -108,7 +107,6 @@ class Robot:
 
                 if isinstance(command, dict) and "ssh" in command:
                     ssh_conn = pxssh.pxssh()  # must be shared across all commands
-                    remote_directory = None
 
                     for remote_command in command["ssh"]:
 
@@ -117,7 +115,6 @@ class Robot:
                             "local": None,
                             "command": remote_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
-                            "current_directory": remote_directory,
                             "config": self.__data["config"]
                         }
 
@@ -126,10 +123,6 @@ class Robot:
                         if result:
                             self.__successful_commands += 1
 
-                        if result and remote_command.startswith("cd "):
-                            (_, path) = remote_command.split(" ")
-                            remote_directory = path
-
                 else:
 
                     handler_data = {
@@ -137,17 +130,11 @@ class Robot:
                         "local": shell,
                         "command": command,
                         "typing_speed": self._get_typing_speeds(typing_speed),
-                        "current_directory": local_directory,
                         "config": self.__data["config"]
                     }
 
                     if self.run_task(handler_data):
                         self.__successful_commands += 1
-
-                        # change dir, under the hood. we pass this into the shell
-                        # spawn.
-                        if command.startswith("cd "):
-                            local_directory = handler_data["current_directory"]
 
             print()  # run ends, tidy up
             shell.close()
