@@ -24,7 +24,6 @@ class TestHandlers(unittest.TestCase):
         self.handler_data = {
             "command": "ls tests/data/typetastic-simple-command-set.yaml",
             "typing_speed": (0, 0, 0),
-            "current_directory": None,
             "local": None,
             "config": {
                 "prompt-string": "$ ",
@@ -146,7 +145,6 @@ class TestSimulatedTyping(unittest.TestCase):
         self.handler_data = {
             "command": "ls tests/data/typetastic-simple-command-set.yaml",
             "typing_speed": (0, 0, 0),
-            "current_directory": None
         }
 
     def get_string_to_simulate(self, command):

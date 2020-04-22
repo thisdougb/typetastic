@@ -223,7 +223,6 @@ class TestCommandRunner(unittest.TestCase):
             "remote": None,
             "command": "ls",
             "typing_speed": (0, 0, 0),
-            "current_directory": None,
             "config": {"prompt-string": "$ ", "typing-color": "cyan", "typing-speed": "supersonic"}
         }
 
@@ -245,7 +244,6 @@ class TestCommandRunner(unittest.TestCase):
             "remote": None,
             "command": "ls",
             "typing_speed": (0, 0, 0),
-            "current_directory": None,
             "config": {
                 "prompt-string": "$ ",
                 "typing-color": "bold-green",
@@ -271,7 +269,6 @@ class TestCommandRunner(unittest.TestCase):
             "remote": None,
             "command": "ls",
             "typing_speed": (0, 0, 0),
-            "current_directory": None,
             "config": {
                 "prompt-string": "$ ",
                 "typing-color": "bright-green",
@@ -298,7 +295,6 @@ class TestCommandRunner(unittest.TestCase):
             "remote": None,
             "command": "ls",
             "typing_speed": (0, 0, 0),
-            "current_directory": None,
             "config": {
                 "prompt-string": "$ ",
                 "typing-color": "bold-bright-green",
@@ -380,7 +376,6 @@ class TestChangeDirCommand(unittest.TestCase):
             "remote": None,
             "command": "cd /etc",
             "typing_speed": (0, 0, 0),
-            "current_directory": None,
             "local": None,
             "config": {
                 "prompt-string": "$ ",

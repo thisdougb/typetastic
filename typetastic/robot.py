@@ -31,7 +31,6 @@ class Robot:
             "remote-prompt": "[ssh] $ "
         }
         self.__successful_commands = 0
-        self.__current_directory = os.getcwd()
 
     def load(self, data_source):
         """Loads data either from file, dict or an array.

@@ -11,9 +11,6 @@ import time
 def bot_handler_default(handler_data):
     """Handler for ls."""
 
-    command = handler_data["command"]
-    current_directory = handler_data["current_directory"]
-
     (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
     simulated_typing = handler_data["simulated_typing"]
     simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
