@@ -1,6 +1,7 @@
 """Test Load Commands."""
 
 import copy
+import pexpect
 from pexpect import pxssh
 from io import StringIO
 from unittest.mock import patch
@@ -8,6 +9,7 @@ import unittest
 import sys
 
 import typetastic.bot_handlers as bothan
+import typetastic
 
 
 class TestHandlers(unittest.TestCase):
@@ -22,8 +24,17 @@ class TestHandlers(unittest.TestCase):
         self.handler_data = {
             "command": "ls tests/data/typetastic-simple-command-set.yaml",
             "typing_speed": (0, 0, 0),
-            "current_directory": None
+            "current_directory": None,
+            "local": None,
+            "config": {
+                "prompt-string": "$ ",
+                "typing-color": "cyan",
+                "typing-speed": "supersonic"
+            },
         }
+
+        shell = typetastic.Robot.setup_shell(self.prompt)
+        self.handler_data["local"] = shell
 
     def get_string_to_simulate(self, command):
         """Returns the string to simulate."""
@@ -52,13 +63,16 @@ class TestHandlers(unittest.TestCase):
     def test_run_simple_ls_command(self):
         """Run basic command."""
 
-        result = bothan.run_command("ls /etc/hosts", None)
+        self.handler_data["command"] = "ls /etc/hosts"
+        result = bothan.run_command(self.handler_data)
+
         self.assertTrue(result)
 
     def test_run_invalid_ls_command(self):
         """Run basic ls command."""
 
-        result = bothan.run_command("ls [", None)
+        self.handler_data["command"] = "ls ["
+        result = bothan.run_command(self.handler_data)
         self.assertFalse(result)
 
     @patch('typetastic.bot_handlers.pause_flow')

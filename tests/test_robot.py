@@ -370,28 +370,45 @@ class TestConfigLoading(unittest.TestCase):
 class TestChangeDirCommand(unittest.TestCase):
     """Test changing directory."""
 
-    def test_cd_command(self):
-        """Test change dir sets __current_directory."""
-        # pylint: disable=protected-access
+    def setUp(self):
 
-        data = {
-            "config": {"prompt-string": "$ ", "typing-speed": "supersonic"},
-            "commands": ["cd /tmp", "pwd"]
+        self.prompt = "$ "
+        self.text_color = "\033[1;36m"  # cyan
+        self.text_reset = "\033[0;0m"
+
+        self.handler_data = {
+            "remote": None,
+            "command": "cd /etc",
+            "typing_speed": (0, 0, 0),
+            "current_directory": None,
+            "local": None,
+            "config": {
+                "prompt-string": "$ ",
+                "typing-color": "cyan",
+                "typing-speed": "supersonic"
+            },
         }
 
-        temp_output = StringIO()
+        shell = typetastic.Robot.setup_shell(self.prompt)
+        self.handler_data["local"] = shell
 
+    def test_cd_command(self):
+        """Test change dir return true."""
+        # pylint: disable=protected-access
+
+        self.handler_data["command"] = "cd /etc"
         robot = typetastic.Robot()
-        robot.load(data)
 
-        sys.stdout = temp_output
-        robot.run()
-        sys.stdout = sys.__stdout__
+        self.assertTrue(robot.run_task(self.handler_data))
 
-        result = temp_output.getvalue()
-        expected_ending = "/usr\r\n$ \n"
+    def test_cd_command_bad_dir(self):
+        """Test change dir return true."""
+        # pylint: disable=protected-access
 
-        self.assertEqual(result[-(len(expected_ending)):], "/tmp\r\n$ \n")
+        self.handler_data["command"] = "cd ["
+        robot = typetastic.Robot()
+
+        self.assertFalse(robot.run_task(self.handler_data))
 
 
 class TestHelperMethods(unittest.TestCase):
