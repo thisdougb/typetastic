@@ -1,8 +1,6 @@
 """Test Load Commands."""
 
 import copy
-from io import StringIO
-import sys
 from unittest.mock import patch
 import unittest
 import typetastic
