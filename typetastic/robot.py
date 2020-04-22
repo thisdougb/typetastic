@@ -71,7 +71,6 @@ class Robot:
         session = pexpect.spawn(shell, timeout=None, encoding='utf-8', echo=False)
         while True:
             session.expect_exact([prompt, '\r\n', pexpect.EOF, pexpect.TIMEOUT])
-            # print(session.before)
             if not session.buffer:
                 break
 
@@ -79,7 +78,6 @@ class Robot:
         time.sleep(0.2)
         while True:
             session.expect_exact([prompt, '\r\n', pexpect.EOF, pexpect.TIMEOUT])
-            # print(session.before)
             if not session.buffer:
                 break
 
