@@ -1,11 +1,13 @@
 """TypeTastic"""
 
-import os
-from pexpect import pxssh
+import time
 import yaml
+import pexpect
+from pexpect import pxssh
 
-from . import bot_handlers as bothan
+
 import typetastic.text_colors as text_colors
+from . import bot_handlers as bothan
 
 
 class Robot:
@@ -29,7 +31,6 @@ class Robot:
             "remote-prompt": "[ssh] $ "
         }
         self.__successful_commands = 0
-        self.__current_directory = os.getcwd()
 
     def load(self, data_source):
         """Loads data either from file, dict or an array.
@@ -60,6 +61,28 @@ class Robot:
                 # we .update() to merge into existing config defaults
                 self.__data["config"].update(result["config"])
 
+    @staticmethod
+    def setup_shell(prompt, shell="/bin/bash"):
+        """Returns a pexpect spawn object.
+
+        TODO: unit test
+        """
+
+        session = pexpect.spawn(shell, timeout=None, encoding='utf-8', echo=False)
+        while True:
+            session.expect_exact([prompt, '\r\n', pexpect.EOF, pexpect.TIMEOUT])
+            if not session.buffer:
+                break
+
+        session.sendline("export PS1='{0}'".format(prompt))
+        time.sleep(0.2)
+        while True:
+            session.expect_exact([prompt, '\r\n', pexpect.EOF, pexpect.TIMEOUT])
+            if not session.buffer:
+                break
+
+        return session
+
     def run(self):
         """Run the currently loaded commands.
 
@@ -75,23 +98,23 @@ class Robot:
 
         if "commands" in self.__data:
 
-            local_directory = None
             prompt = self._get_config("prompt-string")
             bothan.emit_prompt(prompt)
+
+            shell = Robot.setup_shell(prompt)
 
             for command in self.__data["commands"]:
 
                 if isinstance(command, dict) and "ssh" in command:
                     ssh_conn = pxssh.pxssh()  # must be shared across all commands
-                    remote_directory = None
 
                     for remote_command in command["ssh"]:
 
                         handler_data = {
                             "remote": ssh_conn,
+                            "local": None,
                             "command": remote_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
-                            "current_directory": remote_directory,
                             "config": self.__data["config"]
                         }
 
@@ -100,29 +123,22 @@ class Robot:
                         if result:
                             self.__successful_commands += 1
 
-                        if result and remote_command.startswith("cd "):
-                            (_, path) = remote_command.split(" ")
-                            remote_directory = path
-
                 else:
 
                     handler_data = {
                         "remote": None,
+                        "local": shell,
                         "command": command,
                         "typing_speed": self._get_typing_speeds(typing_speed),
-                        "current_directory": local_directory,
                         "config": self.__data["config"]
                     }
 
                     if self.run_task(handler_data):
                         self.__successful_commands += 1
 
-                        # change dir, under the hood. we pass this into the shell
-                        # spawn.
-                        if command.startswith("cd "):
-                            local_directory = handler_data["current_directory"]
-
             print()  # run ends, tidy up
+            shell.close()
+            time.sleep(1)
 
     @staticmethod
     def run_task(handler_data):
