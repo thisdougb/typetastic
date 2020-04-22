@@ -7,8 +7,15 @@ commands:
     - echo ~
     - ls -l ~/.zshrc
     - cat ~/.zshrc
+    - TEST='hello'
     - ssh:
         - ssh root@cardkist.com
         - hostname
+        - cd .ssh
+        - ls
         - exit
     - hostname
+    - cd ~
+    - cd .ssh
+    - ls
+    - echo $TEST
