@@ -153,7 +153,7 @@ class Robot:
                         "command": command,
                         "typing_speed": self._get_typing_speeds(typing_speed),
                         "config": self.__data["config"],
-                        "get_exit_status": False
+                        "get_exit_status": True
                     }
 
                     if self.run_task(handler_data):
