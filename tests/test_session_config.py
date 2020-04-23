@@ -11,14 +11,12 @@ class TestSessionConfig(unittest.TestCase):
     def setUp(self):
 
         self.reference_config = {
-            "config": {
-                "local-prompt": "$ ",
-                "pexpect-delay": 0.2,
-                "prompt-string": "$ ",
-                "remote-prompt": "[ssh] $ ",
-                "typing-color": "cyan",
-                "typing-speed": "moderate",
-            }
+            "local-prompt": "$ ",
+            "pexpect-delay": 0.2,
+            "prompt-string": "$ ",
+            "remote-prompt": "[ssh] $ ",
+            "typing-color": "cyan",
+            "typing-speed": "moderate"
         }
 
     def test_default_config(self):
