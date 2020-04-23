@@ -33,11 +33,11 @@ class TestLoadData(unittest.TestCase):
 
         data = {
             "config": {
+                "local-prompt": "$ ",
                 "prompt-string": "$ ",
                 "remote-prompt": "[ssh] $ ",
                 "typing-color": "cyan",
-                "typing-speed":
-                "supersonic"
+                "typing-speed": "supersonic",
             },
             "commands": ["echo 'Hello, World!'", "ls"]
         }
@@ -211,6 +211,18 @@ class TestCommandRunner(unittest.TestCase):
         # NOTE: this is 5 and not 6 (there are six commands), because
         # the ssh login and exit methods check return value of ssh_conn.closed.
         # Too hard to mock that one right now, as it requires a side effect.
+        self.assertEqual(robot._get_successful_commands(), 5)
+
+    def test_python_command_set(self):
+        """Test successful commands count running python set."""
+        # pylint: disable=protected-access
+
+        data_file = "tests/data/typetastic-python-command-set.yaml"
+
+        robot = typetastic.Robot()
+        robot.load(data_file)
+        robot.run()
+
         self.assertEqual(robot._get_successful_commands(), 5)
 
     @patch('typetastic.bot_handlers.bot_handler_default')

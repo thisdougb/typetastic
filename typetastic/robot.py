@@ -27,8 +27,9 @@ class Robot:
         self.__data["config"] = {
             "typing-color": "cyan",
             "typing-speed": "moderate",
+            "local-prompt": "$ ",
+            "remote-prompt": "[ssh] $ ",
             "prompt-string": "$ ",
-            "remote-prompt": "[ssh] $ "
         }
         self.__successful_commands = 0
 
@@ -115,10 +116,31 @@ class Robot:
                             "local": None,
                             "command": remote_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
-                            "config": self.__data["config"]
+                            "config": self.__data["config"],
+                            "get_exit_status": True
                         }
 
                         result = self.run_task(handler_data)
+
+                        if result:
+                            self.__successful_commands += 1
+
+                elif isinstance(command, dict) and "python3" in command:
+
+                    for python_command in command["python3"]:
+
+                        self.__data["config"]["prompt-string"] = ">>> "
+
+                        handler_data = {
+                            "remote": None,
+                            "local": shell,
+                            "command": python_command,
+                            "typing_speed": self._get_typing_speeds(typing_speed),
+                            "config": self.__data["config"],
+                            "get_exit_status": False
+                        }
+
+                        result = self.run_python_task(handler_data)
 
                         if result:
                             self.__successful_commands += 1
@@ -130,15 +152,38 @@ class Robot:
                         "local": shell,
                         "command": command,
                         "typing_speed": self._get_typing_speeds(typing_speed),
-                        "config": self.__data["config"]
+                        "config": self.__data["config"],
+                        "get_exit_status": False
                     }
 
                     if self.run_task(handler_data):
                         self.__successful_commands += 1
 
-            print()  # run ends, tidy up
             shell.close()
             time.sleep(1)
+            print()  # run ends, tidy up
+
+    @staticmethod
+    def run_python_task(handler_data):
+        """Run a task from handler data."""
+
+        command = handler_data["command"]
+        bothan_method = Robot._get_bothan_method(command)
+
+        config = handler_data["config"]
+        if command == "CTRL_D":
+            handler_data["config"]["prompt-string"] = handler_data["config"]["local-prompt"]
+            handler_data["simulated_typing"] = Robot._string_to_type(config, "^D")
+
+        else:
+            handler_data["simulated_typing"] = Robot._string_to_type(config, command)
+
+        task_result = bothan_method(handler_data)
+
+        prompt = handler_data["config"]["prompt-string"]
+        bothan.emit_prompt(prompt)
+
+        return task_result
 
     @staticmethod
     def run_task(handler_data):
