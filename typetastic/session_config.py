@@ -13,11 +13,14 @@ class SessionConfig:
     def __init__(self):
         """Sets up a default config object."""
         self.__config = {
-            "typing-color": "cyan",
-            "typing-speed": "moderate",
-            "local-prompt": "$ ",
-            "remote-prompt": "[ssh] $ ",
-            "prompt-string": "$ ",
+            "config": {
+                "local-prompt": "$ ",
+                "pexpect-delay": 0.2,  # delay required for response to be read
+                "prompt-string": "$ ",
+                "remote-prompt": "[ssh] $ ",
+                "typing-color": "cyan",
+                "typing-speed": "moderate",
+            }
         }
 
     def get(self, key=None):
@@ -32,7 +35,7 @@ class SessionConfig:
 
     def set(self, key=None, value=None):
         """Sets key to value, and returns True."""
-        if key in self.__config:
+        if key in self.__config["config"]:
             self.__config[key] = value
             return True
 

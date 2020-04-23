@@ -11,11 +11,14 @@ class TestSessionConfig(unittest.TestCase):
     def setUp(self):
 
         self.reference_config = {
-            "typing-color": "cyan",
-            "typing-speed": "moderate",
-            "local-prompt": "$ ",
-            "remote-prompt": "[ssh] $ ",
-            "prompt-string": "$ ",
+            "config": {
+                "local-prompt": "$ ",
+                "pexpect-delay": 0.2,
+                "prompt-string": "$ ",
+                "remote-prompt": "[ssh] $ ",
+                "typing-color": "cyan",
+                "typing-speed": "moderate",
+            }
         }
 
     def test_default_config(self):
@@ -23,6 +26,8 @@ class TestSessionConfig(unittest.TestCase):
 
         session_config = typetastic.session_config.SessionConfig()
         config = session_config.get()
+
+        print(config)
 
         self.assertEqual(config, self.reference_config)
 
