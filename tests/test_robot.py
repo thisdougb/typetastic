@@ -385,6 +385,7 @@ class TestChangeDirCommand(unittest.TestCase):
         self.handler_data = {
             "remote": None,
             "command": "cd /etc",
+            "get_exit_status": True,
             "typing_speed": (0, 0, 0),
             "local": None,
             "config": {
