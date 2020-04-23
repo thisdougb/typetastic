@@ -27,8 +27,6 @@ class TestSessionConfig(unittest.TestCase):
         session_config = typetastic.session_config.SessionConfig()
         config = session_config.get()
 
-        print(config)
-
         self.assertEqual(config, self.reference_config)
 
     def test_set_config_key(self):

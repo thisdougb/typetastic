@@ -25,18 +25,24 @@ class SessionConfig:
 
     def get(self, key=None):
         """Returns the config as a dict."""
+
+        config = self.__config["config"]
+
         if not key:
             return self.__config
 
-        if key in self.__config:
-            return self.__config[key]
+        if key in config:
+            return config[key]
 
         return None
 
     def set(self, key=None, value=None):
         """Sets key to value, and returns True."""
-        if key in self.__config["config"]:
-            self.__config[key] = value
+
+        config = self.__config["config"]
+
+        if key in config:
+            config[key] = value
             return True
 
         return False
