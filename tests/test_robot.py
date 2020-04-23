@@ -82,7 +82,7 @@ class TestLoadData(unittest.TestCase):
 
 
 class TestCommandRunner(unittest.TestCase):
-    """Test running commands locally."""
+    """Test the command runner method."""
 
     @patch('typetastic.bot_handlers.pause_flow')
     def test_valid_command_set(self, mock_pause_flow):
@@ -92,7 +92,6 @@ class TestCommandRunner(unittest.TestCase):
         mock_pause_flow.return_value = True
 
         data = {
-            "config": {"typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "ls /etc/hosts"]
         }
         robot = typetastic.Robot()
@@ -106,7 +105,6 @@ class TestCommandRunner(unittest.TestCase):
         # pylint: disable=protected-access
 
         data = {
-            "config": {"typing-speed": "supersonic"},
             "commands": ["echo 'Hello, World!'", "invalidcommand"]
         }
         robot = typetastic.Robot()
@@ -322,55 +320,6 @@ class TestCommandRunner(unittest.TestCase):
         self.assertTrue(result)
         self.assertTrue("simulated_typing" in handler_data)
         self.assertEqual(handler_data["simulated_typing"], expected_simulated_text)
-
-
-class TestConfigLoading(unittest.TestCase):
-    """Test loading config and defaults."""
-
-    def test_default_config(self):
-        """Test empty config uses defaults."""
-        # pylint: disable=protected-access
-        robot = typetastic.Robot()
-
-        prompt_string = robot._get_config("prompt-string")
-        typing_color = robot._get_config("typing-color")
-        typing_speed = robot._get_config("typing-speed")
-
-        self.assertEqual(prompt_string, "$ ")
-        self.assertEqual(typing_color, "cyan")
-        self.assertEqual(typing_speed, "moderate")
-
-    def test_full_config_loaded_from_file(self):
-        """Test loading config from file."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-        data_file = "tests/data/tt-hello-world.yaml"
-        robot.load(data_file)
-
-        prompt_string = robot._get_config("prompt-string")
-        typing_color = robot._get_config("typing-color")
-        typing_speed = robot._get_config("typing-speed")
-
-        self.assertEqual(prompt_string, "% ")
-        self.assertEqual(typing_speed, "supersonic")
-        self.assertEqual(typing_color, "red")
-
-    def test_partial_config_loaded(self):
-        """Test loading partial config from file preserves defaults."""
-        # pylint: disable=protected-access
-
-        robot = typetastic.Robot()
-        data_file = "tests/data/partial-config.yaml"
-        robot.load(data_file)
-
-        prompt_string = robot._get_config("prompt-string")
-        typing_color = robot._get_config("typing-color")
-        typing_speed = robot._get_config("typing-speed")
-
-        self.assertEqual(prompt_string, "$ ")
-        self.assertEqual(typing_color, "cyan")
-        self.assertEqual(typing_speed, "supersonic")
 
 
 class TestChangeDirCommand(unittest.TestCase):
