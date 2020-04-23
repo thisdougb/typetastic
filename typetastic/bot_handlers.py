@@ -142,9 +142,8 @@ def bot_handler_ctrl_d(handler_data):
     """Handler for vi."""
     delay = 0.2
     session = handler_data["local"]
-    prompt = handler_data["config"]["prompt-string"]
 
-    (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
+    (_, _, return_key_delay) = handler_data["typing_speed"]
     simulated_typing = handler_data["simulated_typing"]
     simulate_typing(simulated_typing, 0, 0, return_key_delay)
 
