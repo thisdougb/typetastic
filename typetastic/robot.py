@@ -8,6 +8,7 @@ from pexpect import pxssh
 
 import typetastic.text_colors as text_colors
 from . import bot_handlers as bothan
+from . import session_config
 
 
 class Robot:
@@ -23,14 +24,10 @@ class Robot:
     Editors = ["vi", "vim", "emacs"]
 
     def __init__(self):
+
         self.__data = {}
-        self.__data["config"] = {
-            "typing-color": "cyan",
-            "typing-speed": "moderate",
-            "local-prompt": "$ ",
-            "remote-prompt": "[ssh] $ ",
-            "prompt-string": "$ ",
-        }
+        self.__config = session_config.SessionConfig()
+
         self.__successful_commands = 0
 
     def load(self, data_source):
@@ -43,11 +40,12 @@ class Robot:
         dict of config: {"config": {'typing-color': 'red'} }
         str of file path: "myfiledata.yaml"
         """
+
+        result = None
+
         if isinstance(data_source, dict):
             if "commands" in data_source or "config" in data_source:
                 result = data_source
-            else:
-                result = None
 
         if isinstance(data_source, list):
             result = {"commands": data_source}
@@ -60,7 +58,8 @@ class Robot:
                 self.__data["commands"] = result["commands"]
             if "config" in result:
                 # we .update() to merge into existing config defaults
-                self.__data["config"].update(result["config"])
+                for key in result["config"]:
+                    self.__config.set(key, result["config"][key])
 
     @staticmethod
     def setup_shell(prompt, shell="/bin/bash"):
@@ -90,16 +89,14 @@ class Robot:
         Returns:
         The number of commands with a success exit code.
         """
-        typing_speed = None
-        if "config" in self.__data:
-            if "typing-speed" in self.__data["config"]:
-                typing_speed = self.__data["config"]["typing-speed"]
+        typing_speed = self.__config.get("typing-speed")
 
         self.__successful_commands = 0  # reset this
 
         if "commands" in self.__data:
 
-            prompt = self._get_config("prompt-string")
+            # prompt = self._get_config("prompt-string")
+            prompt = self.__config.get("prompt-string")
             bothan.emit_prompt(prompt)
 
             shell = Robot.setup_shell(prompt)
@@ -116,7 +113,7 @@ class Robot:
                             "local": None,
                             "command": remote_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
-                            "config": self.__data["config"],
+                            "config": self.__config.get(),
                             "get_exit_status": True
                         }
 
@@ -129,14 +126,14 @@ class Robot:
 
                     for python_command in command["python3"]:
 
-                        self.__data["config"]["prompt-string"] = ">>> "
+                        self.__config.set("prompt-string", ">>> ")
 
                         handler_data = {
                             "remote": None,
                             "local": shell,
                             "command": python_command,
                             "typing_speed": self._get_typing_speeds(typing_speed),
-                            "config": self.__data["config"],
+                            "config": self.__config.get(),
                             "get_exit_status": False
                         }
 
@@ -152,7 +149,7 @@ class Robot:
                         "local": shell,
                         "command": command,
                         "typing_speed": self._get_typing_speeds(typing_speed),
-                        "config": self.__data["config"],
+                        "config": self.__config.get(),
                         "get_exit_status": True
                     }
 
@@ -160,7 +157,7 @@ class Robot:
                         self.__successful_commands += 1
 
             shell.close()
-            time.sleep(1)
+            time.sleep(self.__config.get("pexpect-delay") * 2)  # time to freeze frame in post
             print()  # run ends, tidy up
 
     @staticmethod
@@ -233,16 +230,13 @@ class Robot:
 
         return name
 
-    def _get_config(self, key):
-        """Lookup and return the config value for key."""
-        if "config" in self.__data:
-            if key in self.__data["config"]:
-                return self.__data["config"][key]
-        return None
-
     def _get_data(self):
         """Return the data dict."""
         return self.__data
+
+    def _get_config(self):
+        """Return the config dict."""
+        return self.__config.get()
 
     def _get_successful_commands(self):
         """Return the successful commands run."""
