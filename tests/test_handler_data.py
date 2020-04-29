@@ -35,3 +35,12 @@ class TestHandlerDataClass(unittest.TestCase):
         command = handler_data.get(key="command")
 
         self.assertEqual(command, "ls -l")
+
+    def test_get_typing_speed(self):
+        """Test get typing speeds return correct values for slow typing."""
+        # pylint: disable=protected-access
+
+        slow_typing = [0.1, 0.4, 1.0]
+
+        result = typetastic.handler_data.HandlerData._get_typing_speeds("slow")
+        self.assertEqual(result, slow_typing)

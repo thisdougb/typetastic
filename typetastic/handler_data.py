@@ -4,6 +4,13 @@
 class HandlerData:
     """Handler Data Class."""
 
+    # min typing speed, max typing speed, return key delay
+    TypingSpeeds = {
+        "slow": [0.1, 0.4, 1.0],
+        "moderate": [0.05, 0.2, 0.5],
+        "supersonic": [0, 0, 0]
+    }
+
     def __init__(self):
         """Returns a default handler data object."""
 
@@ -30,6 +37,17 @@ class HandlerData:
         """Sets key to value, and returns True."""
         if key in self.__handler_data:
             self.__handler_data[key] = value
+
+            if key == "typing-speed":
+                self.__handler_data["typing_speed"] = self._get_typing_speeds(typing_speed)
             return True
 
         return False
+
+    @staticmethod
+    def _get_typing_speeds(speed):
+        """Returns typing speeds."""
+        if speed not in HandlerData.TypingSpeeds:
+            speed = "moderate"
+
+        return HandlerData.TypingSpeeds[speed]
