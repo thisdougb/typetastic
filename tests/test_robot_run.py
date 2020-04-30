@@ -1,215 +1,113 @@
-"""Test Load Commands."""
+"""Test Command Runner."""
 
-import copy
 from unittest.mock import patch
 import unittest
 import typetastic
 
 
-class TestLoadData(unittest.TestCase):
-    """Test Load Command File."""
-
-    def test_load_valid_yaml_file(self):
-        """Test loading a valid yaml file."""
-        # pylint: disable=protected-access
-
-        test_file = "tests/data/typetastic-simple-command-set.yaml"
-        result = typetastic.Robot._load_file(test_file)
-
-        self.assertTrue(result)
-
-    def test_load_invalid_yaml_file(self):
-        """Test loading an invalid yaml file."""
-        # pylint: disable=protected-access
-
-        test_file = "tests/data/invalid_file.yaml"
-        result = typetastic.Robot._load_file(test_file)
-
-        self.assertFalse(result)
-
-    def test_load_valid_yaml_dict(self):
-        """Test loading a valid yaml file."""
-        # pylint: disable=protected-access
-
-        data = {
-            "config": {
-                "local-prompt": "$ ",
-                "prompt-string": "$ ",
-                "remote-prompt": "[ssh] $ ",
-                "typing-color": "cyan",
-                "typing-speed": "supersonic",
-            },
-            "commands": ["echo 'Hello, World!'", "ls"]
-        }
-        robot = typetastic.Robot()
-        robot.load(data)
-
-        self.assertEqual(robot._get_data(), data)
-
-    def test_load_invalid_yaml_dict(self):
-        """Test loading an invalid yaml file does not change data."""
-        # pylint: disable=protected-access
-        data = {
-            "my": "test dict"
-        }
-        robot = typetastic.Robot()
-        pre_test_copy = copy.deepcopy(robot._get_data())
-        robot.load(data)
-
-        self.assertEqual(robot._get_data(), pre_test_copy)
-
-    def test_load_valid_commands_array(self):
-        """Test loading a valid array updates commands."""
-        # pylint: disable=protected-access
-        data = ["echo 'Hello, World!'", "ls"]
-        robot = typetastic.Robot()
-        robot.load(data)
-        robot_data = robot._get_data()
-
-        self.assertEqual(robot_data["commands"], data)
-
-    def test_load_ssh_commands(self):
-        """Test loading ssh commands as nested arrays."""
-        # pylint: disable=protected-access
-
-        data = ["ls", {"ssh": ["ssh user@host", "ls", "exit"]}, "whoami"]
-
-        robot = typetastic.Robot()
-        robot.load(data)
-        robot_data = robot._get_data()
-
-        self.assertEqual(robot_data["commands"], data)
-
-
 class TestCommandRunner(unittest.TestCase):
     """Test the command runner method."""
 
+    def setUp(self):
+
+        # set pexpect-delay to 0 to speed up tests
+        session_config = typetastic.session_config.SessionConfig()
+        session_config.set("pexpect-delay", 0)
+
+        self.robot = typetastic.Robot()
+        self.robot.load(session_config.get())
+
+    @patch('typetastic.bot_handlers.bot_handler_default')
+    def test_valid_command_runs(self, mock_bot_handler_default):
+        """Test valid ls command calls default handler."""
+        # pylint: disable=protected-access
+
+        mock_bot_handler_default.return_value = True
+
+        self.robot.load(["ls /etc/hosts"])
+        self.robot.run()
+
+        self.assertEqual(mock_bot_handler_default.call_count, 1)
+        self.assertEqual(self.robot._get_successful_commands(), 1)
+
+    @patch('typetastic.bot_handlers.bot_handler_default')
+    def test_invalid_command_fails(self, mock_bot_handler_default):
+        """Test invalid ls command calls default handler."""
+        # pylint: disable=protected-access
+
+        mock_bot_handler_default.return_value = False
+
+        self.robot.load(["ls ["])
+        self.robot.run()
+
+        self.assertEqual(mock_bot_handler_default.call_count, 1)
+        self.assertEqual(self.robot._get_successful_commands(), 0)
+
     @patch('typetastic.bot_handlers.pause_flow')
-    def test_valid_command_set(self, mock_pause_flow):
-        """Test successful commands count run in valid set."""
+    def test_meta_pause_command_calls_handler(self, mock_pause_flow):
+        """Test meta command PAUSE calls correct bot handler."""
         # pylint: disable=protected-access
 
         mock_pause_flow.return_value = True
 
-        data = {
-            "commands": ["echo 'Hello, World!'", "ls /etc/hosts"]
-        }
-        robot = typetastic.Robot()
-        robot.load(data)
-        robot.run()
+        self.robot.load(["PAUSE"])
+        self.robot.run()
 
-        self.assertEqual(robot._get_successful_commands(), 2)
+        self.assertEqual(mock_pause_flow.call_count, 1)
+        self.assertEqual(self.robot._get_successful_commands(), 1)
 
-    def test_partial_command_set(self):
-        """Test successful commands count run in partial set."""
+    @patch('typetastic.bot_handlers.bot_handler_editor')
+    def test_editor_command(self, mock_bot_handler_editor):
+        """Test vi command calls the correct handler."""
         # pylint: disable=protected-access
 
-        data = {
-            "commands": ["echo 'Hello, World!'", "invalidcommand"]
-        }
-        robot = typetastic.Robot()
-        robot.load(data)
-        robot.run()
+        mock_bot_handler_editor.return_value = True
 
-        self.assertEqual(robot._get_successful_commands(), 1)
+        self.robot.load(["vi /tmp/test.txt"])
+        self.robot.run()
 
-    def test_invalid_command_set(self):
-        """Test successful commands count run in partial set."""
-        # pylint: disable=protected-access
-
-        data_file = "tests/data/typetastic-invalid-command-set.yaml"
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
-
-        print(robot._get_data())
-
-        self.assertEqual(robot._get_successful_commands(), 0)
-
-    @patch('typetastic.bot_handlers.pause_flow')
-    def test_meta_command_set(self, mock_pause_flow):
-        """Test successful commands count run in meta set."""
-        # pylint: disable=protected-access
-
-        mock_pause_flow.return_value = True
-
-        data_file = "tests/data/typetastic-meta-command-set.yaml"
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
-
-        expected_count = len(robot._get_data()["commands"])
-
-        self.assertEqual(robot._get_successful_commands(), expected_count)
-
-    @patch('typetastic.bot_handlers.pause_flow')
-    def test_editor_command_set(self, mock_pause_flow):
-        """Test successful commands count run in editor set."""
-        # pylint: disable=protected-access
-
-        mock_pause_flow.return_value = True
-
-        data_file = "tests/data/typetastic-editor-command-set.yaml"
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
-
-        expected_count = len(robot._get_data()["commands"])
-
-        self.assertEqual(robot._get_successful_commands(), expected_count)
+        self.assertEqual(mock_bot_handler_editor.call_count, 1)
 
     @patch('typetastic.bot_handlers.pause_flow')
     def test_simple_command_set(self, mock_pause_flow):
-        """Test successful commands count run in simple set."""
+        """Test all commands loaded from file run successfully."""
         # pylint: disable=protected-access
 
         mock_pause_flow.return_value = True
 
         data_file = "tests/data/typetastic-simple-command-set.yaml"
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
+        self.robot.load(data_file)
+        self.robot.run()
 
-        expected_count = len(robot._get_data()["commands"])
+        expected_count = len(self.robot._get_data()["commands"])
+        self.assertEqual(self.robot._get_successful_commands(), expected_count)
 
-        self.assertEqual(robot._get_successful_commands(), expected_count)
 
-    @patch('typetastic.bot_handlers.pause_flow')
-    def test_chdir_command_set(self, mock_pause_flow):
-        """Test successful commands count run in chdir set."""
+class TestSSHCommandRunner(unittest.TestCase):
+    """Test SSH commands in the command runner method."""
+
+    def setUp(self):
+        """Configure the context."""
+
+        # set pexpect-delay to 0 to speed up tests
+        session_config = typetastic.session_config.SessionConfig()
+        session_config.set("pexpect-delay", 0)
+        session_config.set("typing-speed", "supersonic")
+        config = {"config": session_config.get()}
+
+        self.robot = typetastic.Robot()
+        self.robot.load(config)
+
+    @patch('typetastic.robot.pexpect.pxssh.pxssh.login')
+    def test_ssh_login_command(self, mock_ssh):
+        """Test ssh login command calls correct bot handler."""
         # pylint: disable=protected-access
 
-        mock_pause_flow.return_value = True
+        mock_ssh.return_value = True
 
-        data_file = "tests/data/typetastic-chdir-command-set.yaml"
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
-
-        expected_count = len(robot._get_data()["commands"])
-
-        self.assertEqual(robot._get_successful_commands(), expected_count)
-
-    @patch('typetastic.robot.pxssh.pxssh.login')
-    @patch('typetastic.robot.pxssh.pxssh.logout')
-    @patch('typetastic.bot_handlers.run_ssh_command')
-    def test_ssh_command_set(self, mock_login, mock_logout, mock_ssh_run):
-        """Test successful commands count running ssh set."""
-        # pylint: disable=protected-access
-
-        mock_login.return_value = True
-        mock_logout.return_value = True
-        mock_ssh_run.return_value = True
-        data_file = "tests/data/typetastic-ssh-command-set.yaml"
-
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
-
-        # NOTE: this is 5 and not 6 (there are six commands), because
-        # the ssh login and exit methods check return value of ssh_conn.closed.
-        # Too hard to mock that one right now, as it requires a side effect.
-        self.assertEqual(robot._get_successful_commands(), 5)
+        self.robot.load([{"ssh": ["ssh user@somehost.com"]}])
+        self.robot.run()
+        self.assertEqual(mock_ssh.call_count, 1)
 
     def test_python_command_set(self):
         """Test successful commands count running python set."""
