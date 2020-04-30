@@ -9,8 +9,8 @@ clean-build:
 	find . -name '*.pyc' -exec rm -fv {} +
 
 test:
-	# python3 -m nose --with-json-extended
-	nosetests --with-json-extended
+	# requires python3 -m nose --with-json-extended
+	python3 -m nose --with-json-extended
 
 build:
 	python3 setup.py sdist bdist_wheel
