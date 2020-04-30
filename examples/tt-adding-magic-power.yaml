@@ -1,0 +1,18 @@
+config:
+    prompt-string: "$ "
+    typing-color: bright-green
+    typing-speed: moderate
+
+commands:
+    - clear
+    - NEWLINE
+    - mkdir MagicPower
+    - cd MagicPower
+    - curl -L0 -O https://raw.githubusercontent.com/thisdougb/MagicPowerAlert/master/MagicPowerAlert.sh
+    - chmod +x MagicPowerAlert.sh
+    - PAUSE
+    - ./MagicPowerAlert.sh
+    - PAUSE
+    - crontab -e
+    - crontab -l
+    - PAUSE
