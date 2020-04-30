@@ -38,6 +38,9 @@ def bot_handler_pause(handler_data):
 def bot_handler_editor(handler_data):
     # pylint: disable=unused-argument
     """Handler for vi."""
+    (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
+    simulated_typing = handler_data["simulated_typing"]
+    simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
     pause_flow()
     return True
 
@@ -120,6 +123,14 @@ def bot_handler_emacs(handler_data):
 def bot_handler_vi(handler_data):
     """Handler for vi."""
     return bot_handler_editor(handler_data)
+
+
+def bot_handler_crontab(handler_data):
+    """Handler for vi."""
+    if handler_data["command"] == "crontab -e":
+        return bot_handler_editor(handler_data)
+    else:
+        return bot_handler_default(handler_data)
 
 
 def emit_prompt(prompt):
