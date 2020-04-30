@@ -70,7 +70,7 @@ class Robot:
 
         session = pexpect.spawn(shell, timeout=None, encoding='utf-8', echo=False)
         while True:
-            session.expect_exact([prompt, '\r\n', pexpect.EOF, pexpect.TIMEOUT])
+            session.expect_exact(['# ', '$ ', '\r\n', pexpect.EOF, pexpect.TIMEOUT])
             if not session.buffer:
                 break
 
