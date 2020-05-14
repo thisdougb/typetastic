@@ -18,4 +18,4 @@ jobs: # A basic unit of work in a run
       - run:
           command: |
             sudo pip install --user --upgrade setuptools wheel
-            python setup.py sdist bdist_wheel
+            make build
