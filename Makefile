@@ -9,6 +9,7 @@ clean-build:
 	find . -name '*.pyc' -exec rm -fv {} +
 
 test:
+	# requires python3 -m nose --with-json-extended
 	python3 -m nose --with-json-extended
 
 build:

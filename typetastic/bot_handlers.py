@@ -38,6 +38,9 @@ def bot_handler_pause(handler_data):
 def bot_handler_editor(handler_data):
     # pylint: disable=unused-argument
     """Handler for vi."""
+    (speed_min, speed_max, return_key_delay) = handler_data["typing_speed"]
+    simulated_typing = handler_data["simulated_typing"]
+    simulate_typing(simulated_typing, speed_min, speed_max, return_key_delay)
     pause_flow()
     return True
 
@@ -122,6 +125,14 @@ def bot_handler_vi(handler_data):
     return bot_handler_editor(handler_data)
 
 
+def bot_handler_crontab(handler_data):
+    """Handler for vi."""
+    if handler_data["command"] == "crontab -e":
+        return bot_handler_editor(handler_data)
+    else:
+        return bot_handler_default(handler_data)
+
+
 def emit_prompt(prompt):
     """Emit a prompt."""
     print(prompt, end="")
@@ -133,10 +144,43 @@ def pause_flow():
     getch.getch()
 
 
+def run_python_command(handler_data):
+    """Run a python interpreter command."""
+    execute_command(handler_data)
+
+
+def bot_handler_CTRL_D(handler_data):
+    """Handler for exiting Python interactive env"""
+    delay = 0.2
+    session = handler_data["local"]
+
+    (_, _, return_key_delay) = handler_data["typing_speed"]
+    simulated_typing = handler_data["simulated_typing"]
+    simulate_typing(simulated_typing, 0, 0, return_key_delay)
+
+    session.sendcontrol('d')
+    time.sleep(delay)
+    while True:
+        session.expect_exact(["$ ", '\r\n', pexpect.EOF, pexpect.TIMEOUT])
+        if not session.buffer:
+            break
+
+    return True
+
+
 def run_command(handler_data):
     """Run local command.
     """
+    execute_command(handler_data)
 
+    if handler_data["get_exit_status"]:
+        return get_last_exit_status(handler_data)
+
+    return True
+
+
+def execute_command(handler_data):
+    """Execute command."""
     delay = 0.2
     command = handler_data["command"]
     session = handler_data["local"]
@@ -151,7 +195,16 @@ def run_command(handler_data):
         if not session.buffer:
             break
 
-    # this is how we get the exit status of the command
+    # return get_last_exit_status(handler_data)
+
+
+def get_last_exit_status(handler_data):
+    """This is how we get the exit status of the command."""
+
+    delay = 0.2
+    session = handler_data["local"]
+    prompt = handler_data["config"]["prompt-string"]
+
     session.sendline("echo $?")
     time.sleep(delay)  # at least 0.2 seems to work, otherwise expect buffer is empty
     retval = False

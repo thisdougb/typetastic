@@ -25,6 +25,8 @@ class TestHandlers(unittest.TestCase):
             "command": "ls tests/data/typetastic-simple-command-set.yaml",
             "typing_speed": (0, 0, 0),
             "local": None,
+            "get_exit_status": True,
+            "simulated_typing": "unit test data",
             "config": {
                 "prompt-string": "$ ",
                 "typing-color": "cyan",
