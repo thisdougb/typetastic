@@ -3,5 +3,3 @@ getch
 nose
 pexpect
 PyYAML
-setuptools
-wheel
