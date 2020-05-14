@@ -20,7 +20,7 @@ Main features:
 What this is not:
 * A video recording tool.
 * An orchestration tool.
-* A way to skive at work by having the bot do you bidding! 😈
+* A way to skive at work by having the bot do your bidding! 😈
 
 There's a video [here on Vimeo](https://vimeo.com/224764672) of the screencast I did that led me to building this tool.
 It shows examples of most features.
