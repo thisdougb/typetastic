@@ -110,7 +110,6 @@ Screen recording often requires stitching together video clips, or pausing for a
 So I added a couple of meta commands to help with the mechanics of making a great video.
 
 #### NEWLINE
-The next meta command is NEWLINE.
 This does what is says, just prints a new line with the prompt.
 It has the same effect as pressing <return> on a real session.
 
