@@ -82,6 +82,33 @@ class TestCommandRunner(unittest.TestCase):
         expected_count = len(self.robot._get_data()["commands"])
         self.assertEqual(self.robot._get_successful_commands(), expected_count)
 
+class TestPythonCommandRunner(unittest.TestCase):
+    """Test Python shell commands in the command runner method."""
+
+    def setUp(self):
+        """Configure the context."""
+
+        # set pexpect-delay to 0 to speed up tests
+        session_config = typetastic.session_config.SessionConfig()
+        session_config.set("pexpect-delay", 0)
+        session_config.set("typing-speed", "supersonic")
+        config = {"config": session_config.get()}
+
+        self.robot = typetastic.Robot()
+        self.robot.load(config)
+
+    def test_python_command_set(self):
+        """Test successful commands count running python set."""
+        # pylint: disable=protected-access
+
+        data_file = "tests/data/typetastic-python-command-set.yaml"
+
+        robot = typetastic.Robot()
+        robot.load(data_file)
+        robot.run()
+
+        self.assertEqual(robot._get_successful_commands(), 5)
+
 
 class TestSSHCommandRunner(unittest.TestCase):
     """Test SSH commands in the command runner method."""
@@ -109,18 +136,6 @@ class TestSSHCommandRunner(unittest.TestCase):
         self.robot.run()
         self.assertEqual(mock_ssh.call_count, 1)
 
-    def test_python_command_set(self):
-        """Test successful commands count running python set."""
-        # pylint: disable=protected-access
-
-        data_file = "tests/data/typetastic-python-command-set.yaml"
-
-        robot = typetastic.Robot()
-        robot.load(data_file)
-        robot.run()
-
-        self.assertEqual(robot._get_successful_commands(), 5)
-
     @patch('typetastic.bot_handlers.bot_handler_default')
     def test_run_task_with_handler(self, mock_default_handler):
         """Test run_task with handler_data using ls command."""
@@ -144,7 +159,7 @@ class TestSSHCommandRunner(unittest.TestCase):
 
     @patch('typetastic.bot_handlers.bot_handler_default')
     def test_run_task_with_handler_is_bold_text(self, mock_default_handler):
-        """Test run_task with handler_data using ls command."""
+        """Test run task with bold text."""
 
         handler_data = {
             "remote": None,
@@ -169,7 +184,7 @@ class TestSSHCommandRunner(unittest.TestCase):
 
     @patch('typetastic.bot_handlers.bot_handler_default')
     def test_run_task_with_handler_is_bright_text(self, mock_default_handler):
-        """Test run_task with handler_data using ls command."""
+        """Test run_task with bright text."""
 
         handler_data = {
             "remote": None,
@@ -195,7 +210,7 @@ class TestSSHCommandRunner(unittest.TestCase):
 
     @patch('typetastic.bot_handlers.bot_handler_default')
     def test_run_task_with_handler_is_bold_bright_text(self, mock_default_handler):
-        """Test run_task with handler_data using ls command."""
+        """Test run_task with bold and bright text."""
 
         handler_data = {
             "remote": None,
