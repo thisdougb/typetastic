@@ -109,29 +109,6 @@ $
 Screen recording often requires stitching together video clips, or pausing for a voice-over.
 So I added a couple of meta commands to help with the mechanics of making a great video.
 
-#### PAUSE
-In this example of using AWS CLI, we use the meta command PAUSE.
-This will pause the robot until a key is pressed.
-
-I find this useful on two counts.
-First to give time to give a voice-over explanation of the config files.
-A pause makes it easier to cut the recording in iMovie, etc.
-
-And second, in a second (not recorded) terminal session I can copy in fake .aws files so I don't show my real credentials.
-This is a nifty use of PAUSE that helps make real use cases in a safe way.
-It avoids having to blur or block-out passwords, etc.
-```
-# using PAUSE
-
-commands:
-    - clear
-    - cat ~/.aws/credentials
-    - cat ~/.aws/config
-    - PAUSE
-    - aws sts get-caller-identity
-    - PAUSE
-```
-Just tap a key to resume the bot.
 #### NEWLINE
 The next meta command is NEWLINE.
 This does what is says, just prints a new line with the prompt.
@@ -150,7 +127,31 @@ commands:
     - NEWLINE
     - aws sts get-caller-identity
 ```
-NEWLINE does not pause the bot.
+#### PAUSE
+In this example of using AWS CLI, we use the meta command PAUSE.
+This will pause the robot until a key is pressed.
+
+I find this useful on two counts.
+First to give time to give a voice-over explanation of the config files.
+A pause makes it easier to cut the recording in iMovie, etc.
+
+And second, in a second (not recorded) terminal session I can copy in fake .aws files so I don't show my real credentials.
+This is a nifty use of PAUSE that helps make real use cases in a safe way.
+It avoids having to blur or block-out passwords, etc.
+```
+# using PAUSE
+
+commands:
+    - clear
+    - cat ~/.aws/credentials
+    - NEWLINE
+    - cat ~/.aws/config
+    - NEWLINE
+    - PAUSE
+    - aws sts get-caller-identity
+    - PAUSE
+```
+Just tap a key to resume the bot.
 ## Editor Commands
 Editors are tricky for the bot.
 By tricky I mean it's impossible to automate an interactive editor (vi, emacs, etc) session.
@@ -164,6 +165,8 @@ And what you do in an editor typically isn't reliant on a smooth typing pace for
 
 The key thing here is that after you splice the editor clip into the main screencast, it visually just flows.
 The visible shell history makes logical sense, just like you exited the editor for real.
+
+Remember to tap a key to resume the bot.
 
 Detected editor commands are:
 * vi
