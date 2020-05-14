@@ -1,4 +1,5 @@
 # Requirements for testing in CircleCI env
+getch
 nose
 pexpect
 PyYAML
