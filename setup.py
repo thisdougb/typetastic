@@ -5,13 +5,17 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="typetastic",
-    version="1.0.0",
+    version="1.1.0",
     author="Doug Bridgens",
     author_email="typetastic@far-oeuf.com",
     description="Python tool for building great screencasts, presentations, video tutorials..",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/thisdougb/typetastic",
+    project_urls={
+        "Bug Tracker": "https://github.com/thisdougb/typetastic/issues",
+        "Source Code": "https://github.com/thisdougb/typetastic",
+    },
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
