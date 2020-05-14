@@ -6,7 +6,7 @@ import pexpect
 from pexpect import pxssh
 
 
-import typetastic.text_colors as text_colors
+from . import text_colors
 from . import bot_handlers as bothan
 from . import session_config
 
