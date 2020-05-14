@@ -111,7 +111,7 @@ So I added a couple of meta commands to help with the mechanics of making a grea
 
 #### NEWLINE
 This does what is says, just prints a new line with the prompt.
-It has the same effect as pressing <i>return</i> on a real session.
+It has the same effect as pressing <i>return</i> in a real session.
 
 I use this mainly to create whitespace around something to make it clearer for the viewer.
 For example, when you cat some files, a blank line often helps visually separate them.
@@ -134,7 +134,7 @@ I find this useful on two counts.
 First to give time to give a voice-over explanation of the config files.
 A pause makes it easier to cut the recording in iMovie, etc.
 
-And second, in a second (not recorded) terminal session I can copy in fake .aws files so I don't show my real credentials.
+And second, in a parallel (not recorded) terminal window I can copy in fake .aws files so I don't show my real credentials.
 This is a nifty use of PAUSE that helps make real use cases in a safe way.
 It avoids having to blur or block-out passwords, etc.
 ```
