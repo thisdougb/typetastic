@@ -9,8 +9,8 @@ jobs: # A basic unit of work in a run
       - checkout # check out source code to working directory
       - run:
           command: |
+            sudo pip install --upgrade pip
             sudo pip install nose
-            sudo pip install nosetests
       - run:
           command: |
             python -m nose -v
