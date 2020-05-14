@@ -13,4 +13,4 @@ jobs: # A basic unit of work in a run
             sudo pip install -r requirements-ci.txt
       - run:
           command: |
-            python -m nose -v
+            python -m nose -v --exclude-files="test_robot_run_python\.py"
