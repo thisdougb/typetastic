@@ -107,6 +107,24 @@ export PATH="/usr/local/opt/python@3.8/bin:$PATH"
 alias python=python3
 $
 ```
+## Config
+The config options are fairly simple.
+
+#### Prompt String
+Keep it simple is my advice.
+Plain strings are good, complicated escape codes are less good.
+
+#### Typing Color
+The options are: black, red, green, yellow, blue, purple, cyan, white.
+
+Additional modifiers are <i>bold</i> and <i>bright</i>.
+These can be used as, <i>bold-green</i> or <i>bold-bright-green</i>.
+
+#### Typing Speed
+The options are: slow, moderate, supersonic.
+
+Supersonic is great for testing.  🚀
+
 ## Meta Commands
 Screen recording often requires stitching together video clips, or pausing for a voice-over.
 So I added a couple of meta commands to help with the mechanics of making a great video.

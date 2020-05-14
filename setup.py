@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="typetastic",
-    version="1.1.1",
+    version="1.1.3",
     author="Doug Bridgens",
     author_email="typetastic@far-oeuf.com",
     description="Python tool for building great screencasts, presentations, video tutorials..",
