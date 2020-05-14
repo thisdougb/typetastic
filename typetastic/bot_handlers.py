@@ -149,8 +149,8 @@ def run_python_command(handler_data):
     execute_command(handler_data)
 
 
-def bot_handler_ctrl_d(handler_data):
-    """Handler for vi."""
+def bot_handler_CTRL_D(handler_data):
+    """Handler for exiting Python interactive env"""
     delay = 0.2
     session = handler_data["local"]
 
