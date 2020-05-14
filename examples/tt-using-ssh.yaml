@@ -1,3 +1,7 @@
+# ./tt-using-ssh.yaml
+
+# Example showing ssh usage, change ssh command to your user@host
+
 config:
     prompt-string: "$ "
     remote-prompt: "[ssh] # "
