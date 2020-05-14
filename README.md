@@ -1,5 +1,5 @@
 # type-tastic
-Python utility to make creating screencasts easier.
+Python utility to make creating screencasts easier, and doing live demo's less stressful.
 
 ## Intro
 A while back I did some Ansible training sessions, for which I did some screen recordings.
@@ -11,6 +11,7 @@ Feedback welcome, just log an issue.
 
 Main features:
 * No more typos in your screen recordings!
+* Let the bot do your show-and-tell demo, while you focus on your audience
 * Define a list of commands, and replay as often as you like.
 * SSH into other hosts and run stuff.
 * Choose the typing speed, and color the commands for clarity.
