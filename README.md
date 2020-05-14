@@ -120,8 +120,7 @@ commands:
     - NEWLINE
     - aws sts get-caller-identity
 ```
-
-## Editor Commands
+## Editor Commands
 Editors are tricky for the bot.
 By tricky I mean it's impossible to automate an interactive editor (vi, emacs, etc) session.
 
