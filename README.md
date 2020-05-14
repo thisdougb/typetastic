@@ -1,5 +1,6 @@
 # TypeTastic
 [![thisdougb](https://circleci.com/gh/thisdougb/typetastic.svg?style=shield)](https://circleci.com/gh/thisdougb/typetastic)
+
 Python utility to make creating screencasts easier, and doing live demo's less stressful.
 
 ## Intro

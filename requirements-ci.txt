@@ -1,0 +1,6 @@
+# Requirements for testing in CircleCI env
+nose
+pexpect
+PyYAML
+setuptools
+wheel
