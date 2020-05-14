@@ -109,6 +109,7 @@ $
 Screen recording often requires stitching together video clips, or pausing for a voice-over.
 So I added a couple of meta commands to help with the mechanics of making a great video.
 
+#### PAUSE
 In this example of using AWS CLI, we use the meta command PAUSE.
 This will pause the robot until a key is pressed.
 
@@ -119,8 +120,6 @@ A pause makes it easier to cut the recording in iMovie, etc.
 And second, in a second (not recorded) terminal session I can copy in fake .aws files so I don't show my real credentials.
 This is a nifty use of PAUSE that helps make real use cases in a safe way.
 It avoids having to blur or block-out passwords, etc.
-
-Just tap a key to resume the bot.
 ```
 # using PAUSE
 
@@ -132,15 +131,14 @@ commands:
     - aws sts get-caller-identity
     - PAUSE
 ```
+Just tap a key to resume the bot.
+#### NEWLINE
 The next meta command is NEWLINE.
 This does what is says, just prints a new line with the prompt.
 It has the same effect as pressing <return> on a real session.
 
 I use this mainly to create whitespace around something to make it clearer for the viewer.
 For example, when you cat some files, a blank line often helps visually separate them.
-
-NEWLINE does not pause the bot.
-
 ```
 # using NEWLINE
 
@@ -152,6 +150,7 @@ commands:
     - NEWLINE
     - aws sts get-caller-identity
 ```
+NEWLINE does not pause the bot.
 ## Editor Commands
 Editors are tricky for the bot.
 By tricky I mean it's impossible to automate an interactive editor (vi, emacs, etc) session.
