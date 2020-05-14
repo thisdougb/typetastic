@@ -37,7 +37,7 @@ Look here, in Python's interactive mode:
 Python 3.8.2 (default, Mar 11 2020, 00:29:50)
 >>> import typetastic
 >>> robot = typetastic.Robot()
->>> robot.load(['ls', 'echo "Hello World!"'])
+>>> robot.load(['ls', 'echo "Hello World\!"'])
 >>> robot.run()
 $ ls
 LICENSE			build			dist			nosetests.json		setup.py		typetastic
