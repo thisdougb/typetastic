@@ -111,7 +111,7 @@ So I added a couple of meta commands to help with the mechanics of making a grea
 
 #### NEWLINE
 This does what is says, just prints a new line with the prompt.
-It has the same effect as pressing <return> on a real session.
+It has the same effect as pressing <i>return</i> on a real session.
 
 I use this mainly to create whitespace around something to make it clearer for the viewer.
 For example, when you cat some files, a blank line often helps visually separate them.
