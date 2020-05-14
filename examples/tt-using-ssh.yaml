@@ -8,7 +8,7 @@ commands:
     - clear
     - pip3 list | grep typetastic
     - ssh:
-        - ssh root@cardkist.com
+        - ssh user@example.com
         - PAUSE
         - hostname
         - cd /var
