@@ -46,9 +46,39 @@ Hello World!
 ```
 ## Something Useful
 Now we see the gist of it, we can do something more useful.
+To run TypeTastic command files, I use this simple runner script.
+```
+# tt-robot.py
+#
+# Run a typetastic command file.
+#
+# Usage:
+#   tt-robot.py <file>
+
+import argparse
+import typetastic
+
+
+def main():
+    """Run a typetastic file."""
+
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("inputfile")
+    args = arg_parser.parse_args()
+
+    robot = typetastic.Robot()
+    robot.load(args.inputfile)
+    robot.run()
+
+
+if __name__ == "__main__":
+    main()
+```
 Let's say we want to show Mac OSX users how to find their shell profile.
 
-The config section has defaults, so we can leave that out of our YAML file.
+Our yaml file has a config and a commands section.
+The config section has defaults, so it's optional.
+The commands are simply listed as you'd type them.
 ```
 # ./tt-something-useful.yaml
 
@@ -73,6 +103,7 @@ $ cat ~/.zshrc
 export GPG_TTY=$(tty)
 export PATH="/usr/local/opt/python@3.8/bin:$PATH"
 alias python=python3
+$
 ```
 ## Meta Commands
 Screen recording often requires stitching together video clips, or pausing for a voice-over.
