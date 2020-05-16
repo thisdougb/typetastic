@@ -4,7 +4,8 @@ VERSION=$(shell python3 setup.py --version)
 
 dev:
 	pip3 install --upgrade pip
-	pip3 install setuptools wheel
+	pip3 install wheel
+	pip3 install setuptools
 	pip3 install -r requirements-ci.txt
 
 clean:
