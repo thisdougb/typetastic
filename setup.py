@@ -30,7 +30,7 @@ setup(
     author="Doug Bridgens",
     author_email="typetastic@far-oeuf.com",
     keywords='automation screencast videotut',
-    description="Python tool for building great screencasts, presentations, video tutorials..",
+    description="Python tool for building great screencasts, presentations, video tutorials.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/thisdougb/typetastic",
