@@ -5,7 +5,7 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.install import install
 
-VERSION = "1.1.7"
+VERSION = "1.1.8"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
