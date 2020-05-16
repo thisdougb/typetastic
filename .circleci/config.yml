@@ -66,9 +66,10 @@ jobs:
       - run:
           name: init .pypirc
           command: |
-            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "[pypitest]" >> ~/.pypirc
             echo -e "username = __token__" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+
       - run:
           name: build deployment packages
           command: |
