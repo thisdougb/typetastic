@@ -15,10 +15,15 @@ workflows:
             branches:
               ignore: /.*/
 
-jobs:
-  build:
+executors:
+  tt-executor:
     docker:
       - image: circleci/python:3.6
+    working_directory: ~/typetastic
+
+jobs:
+  build:
+    executor: tt-executor
     steps:
       - checkout
 
@@ -42,8 +47,7 @@ jobs:
             make test
 
   deploy:
-    docker:
-      - image: circleci/python:3.6
+    executor: tt-executor
     steps:
       - checkout
       - restore_cache:
