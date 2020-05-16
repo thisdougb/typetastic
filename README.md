@@ -2,6 +2,9 @@
 [![thisdougb](https://circleci.com/gh/thisdougb/typetastic.svg?style=shield)](https://circleci.com/gh/thisdougb/typetastic)
 
 Python utility to make creating screencasts easier, and doing live demo's less stressful.
+```
+$ pip install typetastic
+```
 
 ## Intro
 A while back I did some Ansible training sessions, for which I did some screen recordings.
