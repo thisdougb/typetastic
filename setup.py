@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="typetastic",
-    version="1.1.3",
+    version="1.1.5",
     author="Doug Bridgens",
     author_email="typetastic@far-oeuf.com",
     description="Python tool for building great screencasts, presentations, video tutorials..",
@@ -19,7 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX :: Linux",
         "Topic :: Education :: Computer Aided Instruction (CAI)"
