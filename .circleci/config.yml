@@ -80,4 +80,4 @@ jobs:
           name: upload to pypi
           command: |
             . venv/bin/activate
-            python3 -m twine upload -r testpypi --config-file .pypirc  dist/*
+            python3 -m twine upload -r pypi --config-file .pypirc  dist/*
